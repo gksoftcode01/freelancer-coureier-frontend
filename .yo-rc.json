@@ -3,7 +3,12 @@
     "applicationType": "monolith",
     "authenticationType": "jwt",
     "baseName": "FreelancerCourier",
-    "blueprints": [],
+    "blueprints": [
+      {
+        "name": "generator-jhipster-react-native",
+        "version": "4.3.0"
+      }
+    ],
     "buildTool": "maven",
     "cacheProvider": "ehcache",
     "clientFramework": "react",
@@ -19,15 +24,35 @@
     "enableHibernateCache": true,
     "enableSwaggerCodegen": false,
     "enableTranslation": true,
+    "entities": [
+      "StateProvince",
+      "Country",
+      "City",
+      "UserRate",
+      "ItemTypes",
+      "AppUser",
+      "Flight",
+      "CargoRequestStatus",
+      "CargoRequest",
+      "CargoRequestDetails",
+      "Bid",
+      "Ask"
+    ],
     "entitySuffix": "",
     "gitCompany": "",
     "jhiPrefix": "jhi",
     "jhipsterVersion": "7.9.3",
     "jwtSecretKey": "M2VkM2M1Y2RjN2E0NWZmYTE4NzdkMjYxODcwM2Y1NTA5OTY2NGFlOTVhNmYxMTA0MjU2NDZiNTdjMzdkNzNjOGYwMGNjOGUzY2ZlZTJkODA0YWI4NzExMGIwYjY3YTEzZTVlZjA5ZjQ4MzMzY2M3YTFiMWEyMTQxMDg4YWM0OTk=",
     "languages": ["en", "ar-ly"],
+    "lastLiquibaseTimestamp": 1673373102000,
     "messageBroker": false,
     "nativeLanguage": "en",
-    "otherModules": [],
+    "otherModules": [
+      {
+        "name": "generator-jhipster-react-native",
+        "version": "4.3.0"
+      }
+    ],
     "packageFolder": "com/gksoft/application",
     "packageName": "com.gksoft.application",
     "pages": [],

@@ -9,6 +9,18 @@ import ReduxPersist from '../../config/redux-persist';
 export const reducers = combineReducers({
   appState: require('./app-state.reducer').reducer,
   users: require('./user.reducer').reducer,
+  stateProvinces: require('../../modules/entities/state-province/state-province.reducer').reducer,
+  countries: require('../../modules/entities/country/country.reducer').reducer,
+  cities: require('../../modules/entities/city/city.reducer').reducer,
+  userRates: require('../../modules/entities/user-rate/user-rate.reducer').reducer,
+  itemTypes: require('../../modules/entities/item-types/item-types.reducer').reducer,
+  appUsers: require('../../modules/entities/app-user/app-user.reducer').reducer,
+  flights: require('../../modules/entities/flight/flight.reducer').reducer,
+  cargoRequestStatuses: require('../../modules/entities/cargo-request-status/cargo-request-status.reducer').reducer,
+  cargoRequests: require('../../modules/entities/cargo-request/cargo-request.reducer').reducer,
+  cargoRequestDetails: require('../../modules/entities/cargo-request-details/cargo-request-details.reducer').reducer,
+  bids: require('../../modules/entities/bid/bid.reducer').reducer,
+  asks: require('../../modules/entities/ask/ask.reducer').reducer,
   // jhipster-react-native-redux-store-import-needle
   chat: require('../../modules/chat/chat.reducer').reducer,
   account: require('./account.reducer').reducer,
