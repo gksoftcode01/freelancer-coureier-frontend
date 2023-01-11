@@ -16,7 +16,7 @@ import RegisterScreen from '../modules/account/register/register-screen';
 import ForgotPasswordScreen from '../modules/account/password-reset/forgot-password-screen';
 import ChangePasswordScreen from '../modules/account/password/change-password-screen';
 import AccountActions from '../shared/reducers/account.reducer';
-import EntityStackScreen, { getEntityRoutes } from './entity-stack';
+import EntityStackScreen, { getEntityRoutes ,flightStack,cargoStack} from './entity-stack';
 import StorybookScreen from '../../storybook';
 import ChatScreen from '../modules/chat/chat-screen';
 import DrawerContent from './drawer/drawer-content';
@@ -24,7 +24,7 @@ import { isReadyRef, navigationRef } from './nav-ref';
 import NotFound from './not-found-screen';
 import { ModalScreen } from './modal-screen';
 import { DrawerButton } from './drawer/drawer-button';
-
+ 
 export const drawerScreens = [
   {
     name: 'Home',
@@ -61,6 +61,7 @@ export const drawerScreens = [
     component: ChangePasswordScreen,
     auth: true,
   },
+   
   {
     name: 'EntityStack',
     isStack: true,
@@ -176,13 +177,14 @@ function NavContainer(props) {
       <Stack.Navigator>
         <Stack.Screen name="Home" options={{ headerShown: false }}>
           {() => (
-            <Drawer.Navigator
-              drawerContent={(p) => <DrawerContent {...p} />}
-              initialRouteName={drawerScreens[0].name}
-              drawerType={dimensions.width >= 768 ? 'permanent' : 'front'}
-              screenOptions={{ headerShown: true, headerLeft: DrawerButton }}>
-              {getScreens(props)}
-            </Drawer.Navigator>
+            
+             <Drawer.Navigator
+               drawerContent={(p) => <DrawerContent {...p} />}
+               initialRouteName={drawerScreens[0].name}
+               drawerType={dimensions.width >= 768 ? 'permanent' : 'front'}
+               screenOptions={{ headerShown: true, headerLeft: DrawerButton }}>
+               {getScreens(props)}
+             </Drawer.Navigator>
           )}
         </Stack.Screen>
         <Stack.Screen
@@ -211,6 +213,8 @@ function NavContainer(props) {
         />
         <Stack.Screen name="NotFound" component={NotFound} options={{ title: 'Oops!' }} />
       </Stack.Navigator>
+     
+    
     </NavigationContainer>
   );
 }
