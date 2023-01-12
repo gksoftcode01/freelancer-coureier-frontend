@@ -5,16 +5,16 @@ import { Metrics, ApplicationStyles, Colors } from '../../shared/themes';
 export default StyleSheet.create({
   ...ApplicationStyles.screen,
   mainContainer: {
-    backgroundColor: Colors.jhipsterBlue,
+ //   backgroundColor: Colors.jhipsterBlue,
   },
   welcomeText: {
     textAlign: 'center',
     fontSize: 20,
-    color: Colors.white,
+    color: Colors.jhipsterBlue,
     fontWeight: '600',
   },
   hairline: {
-    borderBottomColor: Colors.white,
+    borderBottomColor: Colors.jhipsterBlue,
     borderBottomWidth: 1,
     marginHorizontal: 20,
     marginTop: 32,
@@ -46,19 +46,19 @@ export default StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: Colors.white,
+    color: Colors.jhipsterBlue,
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
-    color: Colors.white,
+    color: Colors.jhipsterBlue,
   },
   highlight: {
     fontWeight: '700',
   },
   footer: {
-    color: Colors.white,
+    color: Colors.jhipsterBlue,
     fontSize: 12,
     fontWeight: '600',
     padding: 4,
@@ -70,16 +70,16 @@ export default StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
-  authContainerTrue: {
-    backgroundColor: '#02b875',
-  },
+  // authContainerTrue: {
+  //   backgroundColor: '#02b875',
+  // },
   authContainerFalse: {
     backgroundColor: '#efbb6d',
   },
   authText: {
     textAlign: 'center',
     fontSize: 18,
-    color: Colors.white,
+    color: Colors.jhipsterBlue,
     fontWeight: '600',
   },
 });

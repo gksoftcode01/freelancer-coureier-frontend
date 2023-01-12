@@ -2,12 +2,16 @@ import * as React from 'react';
 import { AppState, Text, useWindowDimensions, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import * as SplashScreen from 'expo-splash-screen';
-import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useReduxDevToolsExtension } from '@react-navigation/devtools';
 import { connect } from 'react-redux';
-
+import { useColorScheme } from 'react-native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from '@react-navigation/native';
 // import screens
 import HomeScreen from '../modules/home/home-screen';
 import LoginScreen from '../modules/login/login-screen';
@@ -24,95 +28,19 @@ import { isReadyRef, navigationRef } from './nav-ref';
 import NotFound from './not-found-screen';
 import { ModalScreen } from './modal-screen';
 import { DrawerButton } from './drawer/drawer-button';
- 
-export const drawerScreens = [
-  {
-    name: 'Home',
-    component: HomeScreen,
-    auth: null,
-  },
-  {
-    name: 'Login',
-    route: 'login',
-    component: LoginScreen,
-    auth: false,
-  },
-  {
-    name: 'Settings',
-    route: 'settings',
-    component: SettingsScreen,
-    auth: true,
-  },
-  {
-    name: 'Register',
-    route: 'register',
-    component: RegisterScreen,
-    auth: false,
-  },
-  {
-    name: 'Forgot Password',
-    route: 'reset-password',
-    component: ForgotPasswordScreen,
-    auth: false,
-  },
-  {
-    name: 'Change Password',
-    route: 'change-password',
-    component: ChangePasswordScreen,
-    auth: true,
-  },
-   
-  {
-    name: 'EntityStack',
-    isStack: true,
-    component: EntityStackScreen,
-    options: {
-      title: 'Entities',
-      headerShown: false,
-    },
-    auth: true,
-  },
-  {
-    name: 'Chat',
-    route: 'chat',
-    component: ChatScreen,
-    auth: true,
-  },
-];
-if (__DEV__) {
-  drawerScreens.push({
-    name: 'Storybook',
-    route: 'storybook',
-    component: StorybookScreen,
-    auth: false,
-  });
-}
-export const getDrawerRoutes = () => {
-  const routes = {};
-  drawerScreens.forEach((screen) => {
-    if (screen.route) {
-      routes[screen.name] = screen.route;
-    }
-  });
-  return routes;
-};
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { homeStack} from './home-stack';
+
 
 const linking = {
   prefixes: ['rnapp://', Linking.makeUrl('/')],
   config: {
     initialRouteName: 'Home',
     screens: {
-      Home: {
-        screens: {
-          ...getDrawerRoutes(),
-          EntityStack: {
-            path: 'entities',
-            screens: {
-              ...getEntityRoutes(),
-            },
-          },
-        },
-      },
+      Home: 'Home/*',
+      Flights: 'Flights/*',
+      Cargo :'Cargo/*',
       ModalScreen: 'alert',
       NotFound: '*',
     },
@@ -121,18 +49,28 @@ const linking = {
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
+const getTabBarVisibility = (route) => {
+  const routeName = route.state
+    ? route.state.routes[route.state.index].name
+    : '';
 
-const getScreens = (props) => {
-  const isAuthed = props.account !== null;
-  return drawerScreens.map((screen, index) => {
-    if (screen.auth === null || screen.auth === undefined) {
-      return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
-    } else if (screen.auth === isAuthed) {
-      return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
-    }
-    return null;
-  });
+  if (routeName === 'Chat') {
+    return false;
+  }
+  return true;
 };
+// const getScreens = (props) => {
+//   const isAuthed = props.account !== null;
+//   return drawerScreens.map((screen, index) => {
+//     if (screen.auth === null || screen.auth === undefined) {
+//       return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
+//     } else if (screen.auth === isAuthed) {
+//       return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
+//     }
+//     return null;
+//   });
+// };
 
 function NavContainer(props) {
   const { loaded, getAccount } = props;
@@ -163,18 +101,93 @@ function NavContainer(props) {
   useReduxDevToolsExtension(navigationRef);
 
   const dimensions = useWindowDimensions();
+  const scheme = useColorScheme();
+
   return !loaded ? (
     <View>
       <Text>Loading...</Text>
     </View>
   ) : (
-    <NavigationContainer
-      linking={linking}
-      ref={navigationRef}
+    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme} 
+       ref={navigationRef}
       onReady={() => {
         isReadyRef.current = true;
       }}>
-      <Stack.Navigator>
+         <Tab.Navigator
+    screenOptions={{
+      activeTintColor: '#2e64e5',
+    }}>
+    
+    <Tab.Screen
+      name="Flights"
+      component={flightStack}
+      options={({route}) => ({
+        tabBarLabel: 'Available couriers',
+        tabBarVisible: getTabBarVisibility(route), 
+        headerShown: false,
+        tabBarIcon: ({color, size}) => (
+          <Ionicons
+            name="airplane-outline"
+            color={color}
+            size={size}
+          />
+        ),
+      })}
+    />
+    <Tab.Screen
+      name="Home"
+      component={homeStack}
+      options={{
+        headerShown: false,
+        tabBarLabel: 'Home',
+        tabBarIcon: ({color, size}) => (
+          <Ionicons name="home" color={color} size={size} />
+        ),
+      }}
+    />
+      <Tab.Screen
+      name="Cargo"
+      component={cargoStack}
+      options={{
+         tabBarLabel: 'Courier requests',
+        headerShown: false,
+        tabBarIcon: ({color, size}) => (
+          <Ionicons name="briefcase" color={color} size={size} />
+        ),
+      }}
+    />
+    <Tab.Screen
+          name="ModalScreen"
+          component={ModalScreen}
+          options={{
+            tabBarIcon:({color, size}) => (<></>),
+            tabBarButton: () => null,
+            tabBarLabel:"",
+            headerShown: false,
+            cardStyle: { backgroundColor: 'transparent' },
+            cardOverlayEnabled: true,
+            cardStyleInterpolator: ({ current: { progress } }) => ({
+              cardStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 0.5, 0.9, 1],
+                  outputRange: [0, 0.25, 0.7, 1],
+                }),
+              },
+              overlayStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.5],
+                  extrapolate: 'clamp',
+                }),
+              },
+            }),
+          }}
+        />
+      <Tab.Screen name="NotFound" component={NotFound} options={{    tabBarButton: () => null,title: 'Oops!' }} />
+
+  </Tab.Navigator>
+
+      {/* <Stack.Navigator>
         <Stack.Screen name="Home" options={{ headerShown: false }}>
           {() => (
             
@@ -213,7 +226,7 @@ function NavContainer(props) {
         />
         <Stack.Screen name="NotFound" component={NotFound} options={{ title: 'Oops!' }} />
       </Stack.Navigator>
-     
+      */}
     
     </NavigationContainer>
   );

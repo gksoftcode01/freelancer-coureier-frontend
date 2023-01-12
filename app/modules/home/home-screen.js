@@ -6,9 +6,13 @@ import { connect } from 'react-redux';
 import LearnMoreLinks from './learn-more-links.component.js';
 import { Images } from '../../shared/themes';
 import styles from './home-screen.styles';
+import RoundedButton from '../../shared/components/rounded-button/rounded-button';
+import { login, logout, loginLoad } from '../../modules/login/login.sagas';
+import LoginActions from '../../modules/login/login.reducer';
 
 function HomeScreen(props) {
-  const { account } = props;
+  const { navigation , account } = props;
+  
   return (
     <View style={[styles.container, styles.mainContainer]} testID="homeScreen">
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
@@ -22,12 +26,18 @@ function HomeScreen(props) {
             <Text style={styles.authText}>
               <Ionicons name="md-checkmark-circle" size={22} color={'white'} /> You are signed in as {account.login}
             </Text>
+            <RoundedButton text="Settings" onPress={() => navigation.navigate('Settings')}   />
+            <RoundedButton text="Change password" onPress={() => navigation.navigate('Change Password')}   />
+             
           </View>
         ) : (
           <View style={[styles.authContainer, styles.authContainerFalse]} testID="authDisplayFalse">
             <Text style={styles.authText}>
               <Ionicons name="md-information-circle" size={22} color={'white'} /> You are not signed in.
             </Text>
+            <RoundedButton text="Login" onPress={() => navigation.navigate('Login')}   />
+            <RoundedButton text="Register" onPress={() => navigation.navigate('Register')}   />
+            <RoundedButton text="Forgot Password" onPress={() => navigation.navigate('Forgot Password')}   />
           </View>
         )}
         <View style={styles.hairline} />
@@ -47,17 +57,8 @@ function HomeScreen(props) {
               </Text>
             </View>
           )}
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Make Some Changes</Text>
-            <Text style={styles.sectionDescription}>
-              Edit <Text style={styles.highlight}>app/modules/home/home-screen.js</Text> to change this screen and then come back to see
-              your edits.
-            </Text>
-          </View>
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Learn More</Text>
-          </View>
-          <LearnMoreLinks />
+        
+      
         </View>
       </ScrollView>
     </View>

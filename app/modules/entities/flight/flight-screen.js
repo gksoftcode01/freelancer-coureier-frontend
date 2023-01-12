@@ -5,6 +5,19 @@ import { useFocusEffect } from '@react-navigation/native';
 import FlightActions from './flight.reducer';
 import styles from './flight-styles';
 import AlertMessage from '../../../shared/components/alert-message/alert-message';
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImgWrapper,
+  UserImg,
+  UserInfoText,
+  UserName,
+  PostTime,
+  MessageText,
+  TextSection,
+} from '../../../shared/themes/MessageStyles';
+import moment from 'moment/min/moment-with-locales';
 
 function FlightScreen(props) {
   const [page, setPage] = React.useState(0);
@@ -23,11 +36,11 @@ function FlightScreen(props) {
   );
 
   const renderRow = ({ item }) => {
-    return (
+     return (
       <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })}>
         <View style={styles.listRow}>
-          <Text style={styles.whiteLabel}>ID: {item.id}</Text>
-          {/* <Text style={styles.label}>{item.description}</Text> */}
+          <Text style={styles.whiteLabel}>From: {item.fromCountry.name} to: {item.toCountry.name}  </Text>
+           <Text style={styles.label}>{  new Date(item.flightDate).toLocaleString() }</Text>  
         </View>
       </TouchableOpacity>
     );
@@ -55,8 +68,8 @@ function FlightScreen(props) {
     fetchFlights();
   };
   return (
-    <View style={styles.container} testID="flightScreen">
-      <FlatList
+    <View style={styles.container}  testID="flightScreen">
+      {/* <FlatList
         contentContainerStyle={styles.listContent}
         data={flightList}
         renderItem={renderRow}
@@ -64,7 +77,42 @@ function FlightScreen(props) {
         initialNumToRender={oneScreensWorth}
         onEndReached={handleLoadMore}
         ListEmptyComponent={renderEmpty}
-      />
+      /> */}
+        <FlatList
+              data={flightList}
+              keyExtractor={(item) => item.id}    
+              initialNumToRender={oneScreensWorth}
+              onEndReached={handleLoadMore}
+              ListEmptyComponent={renderEmpty} 
+              renderItem={({item}) => (
+                <Card
+                onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
+                  <UserInfo>
+                    <UserImgWrapper>
+                      <UserImg
+                        source={
+                          item.toUserImg
+                            ? item.toUserImg
+                            : require('../../../../assets/avatar.png')
+                        }
+                      />
+                    </UserImgWrapper>
+                    <TextSection>
+                    <MessageText>
+                      <Text style={styles.whiteLabel}>From: {item.fromCountry.name} to: {item.toCountry.name}  </Text>
+                         <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') }</Text>  
+                        </MessageText>
+
+                      <UserInfoText>
+                        <UserName>{item.createBy.user.firstName }</UserName>
+                        <PostTime>     {  moment(new Date(item.createDate)).fromNow()  }</PostTime>
+                      </UserInfoText>
+                      
+                    </TextSection>
+                  </UserInfo>
+                </Card>
+              )}
+            />
     </View>
   );
 }

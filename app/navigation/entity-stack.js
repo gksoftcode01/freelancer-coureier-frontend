@@ -236,17 +236,7 @@ export const cargoStack = ({navigation}) => (
       })}
     </EntityStack.Navigator>
 );
-const Tab = createBottomTabNavigator();
-const getTabBarVisibility = (route) => {
-  const routeName = route.state
-    ? route.state.routes[route.state.index].name
-    : '';
 
-  if (routeName === 'Chat') {
-    return false;
-  }
-  return true;
-};
 export default function EntityStackScreen() {
   return (
     <Tab.Navigator
