@@ -5,19 +5,30 @@ import { useFocusEffect } from '@react-navigation/native';
 import FlightActions from './flight.reducer';
 import styles from './flight-styles';
 import AlertMessage from '../../../shared/components/alert-message/alert-message';
+ 
+
 import {
   Container,
   Card,
   UserInfo,
-  UserImgWrapper,
   UserImg,
-  UserInfoText,
   UserName,
+  UserInfoText,
   PostTime,
-  MessageText,
-  TextSection,
-} from '../../../shared/themes/MessageStyles';
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType
+} from '../../../shared/themes/FeedStyles';
+
 import moment from 'moment/min/moment-with-locales';
+import { Ionicons } from '@expo/vector-icons';
+import StarRating from 'react-native-star-rating-widget';
+
 
 function FlightScreen(props) {
   const [page, setPage] = React.useState(0);
@@ -25,7 +36,7 @@ function FlightScreen(props) {
   const [size /*, setSize*/] = React.useState(20);
 
   const { flight, flightList, getAllFlights, fetching } = props;
-
+ 
   useFocusEffect(
     React.useCallback(() => {
       console.debug('Flight entity changed and the list screen is now in focus, refresh');
@@ -85,32 +96,89 @@ function FlightScreen(props) {
               onEndReached={handleLoadMore}
               ListEmptyComponent={renderEmpty} 
               renderItem={({item}) => (
-                <Card
-                onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
-                  <UserInfo>
-                    <UserImgWrapper>
-                      <UserImg
-                        source={
-                          item.toUserImg
-                            ? item.toUserImg
-                            : require('../../../../assets/avatar.png')
-                        }
-                      />
-                    </UserImgWrapper>
-                    <TextSection>
-                    <MessageText>
-                      <Text style={styles.whiteLabel}>From: {item.fromCountry.name} to: {item.toCountry.name}  </Text>
-                         <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') }</Text>  
-                        </MessageText>
 
-                      <UserInfoText>
-                        <UserName>{item.createBy.user.firstName }</UserName>
-                        <PostTime>     {  moment(new Date(item.createDate)).fromNow()  }</PostTime>
-                      </UserInfoText>
+                <Card key={item.id}    onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >  
+                <UserInfo>
+                  <UserImg
+                  source={
+                    item.toUserImg
+                      ? item.toUserImg
+                      : require('../../../../assets/avatar3.jpg')
+                  }
+                  />
+                  <UserInfoText>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
+                      <UserName >
+                        {item.createBy.user.firstName  }{' '}
+                        {item.createBy.user.lastName  }
+                      </UserName>
+                    </TouchableOpacity>
+                    <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
+                  </UserInfoText>
+                  <UserRate>
+                  <StarRating
+                     rating={2}
+                  onChange={()=> {return null;} }
+                  starSize={18}
+                     />
+                     <Text style={styles.smallBlackLabel}>(25)</Text>
+                  </UserRate>
+                </UserInfo>
+                <PostText>
+                <Text style={styles.orangeLabel}> {item.fromCountry.name}  </Text>
+                {' '}   
+                <Ionicons name="airplane-outline" size={18} color={props.tintColor} />
+                {' '} 
+                <Text style={styles.orangeLabel}>  {item.toCountry.name}  </Text>
+                       
+                 </PostText>
+                 <PostText>
+                 <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') }</Text>  
+                 {' '}
+                 <Text   style={styles.smallBlackLabel}>{Number(item.maxWeight) > 0?` - Max Weight:${Number(item.maxWeight)} KG` :''}</Text>
+
+             
+                  </PostText>
+                  <PostText>
+                  {item.availableItemTypes &&
+        item.availableItemTypes.map((entity, index) => (
+          <>
+          <Text style={styles.backgroundlabel} key={index} >
+            {String(entity.name || ' ')}   
+          </Text>
+          {' '}
+          </>
+        ))}
+
+                    </PostText>
+                        </Card>
+
+                // <Card
+                // onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
+                //   <UserInfo>
+                //     <UserImgWrapper>
+                //       <UserImg
+                //         source={
+                //           item.toUserImg
+                //             ? item.toUserImg
+                //             : require('../../../../assets/avatar3.jpg')
+                //         }
+                //       />
+                //     </UserImgWrapper>
+                //     <TextSection>
+                //     <MessageText>
+                //       <Text style={styles.whiteLabel}>From: {item.fromCountry.name} to: {item.toCountry.name}  </Text>
+                //          <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') }</Text>  
+                //         </MessageText>
+
+                //       <UserInfoText>
+                //         <UserName>{item.createBy.user.firstName }</UserName>
+                //         <PostTime>     {  moment(new Date(item.createDate)).fromNow()  }</PostTime>
+                //       </UserInfoText>
                       
-                    </TextSection>
-                  </UserInfo>
-                </Card>
+                //     </TextSection>
+                //   </UserInfo>
+                // </Card>
               )}
             />
     </View>

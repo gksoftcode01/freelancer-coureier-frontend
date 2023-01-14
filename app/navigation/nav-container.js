@@ -6,8 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useReduxDevToolsExtension } from '@react-navigation/devtools';
 import { connect } from 'react-redux';
-import { useColorScheme } from 'react-native';
-import {
+ import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
@@ -31,7 +30,7 @@ import { DrawerButton } from './drawer/drawer-button';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
-
+import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 
 const linking = {
   prefixes: ['rnapp://', Linking.makeUrl('/')],
@@ -104,11 +103,12 @@ function NavContainer(props) {
   const scheme = useColorScheme();
 
   return !loaded ? (
+    
     <View>
       <Text>Loading...</Text>
     </View>
   ) : (
-    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme} 
+    <NavigationContainer /*theme={scheme === 'dark' ? DarkTheme : DefaultTheme}*/
        ref={navigationRef}
       onReady={() => {
         isReadyRef.current = true;
@@ -229,7 +229,8 @@ function NavContainer(props) {
       */}
     
     </NavigationContainer>
-  );
+  ) ;
+  
 }
 
 const mapStateToProps = (state) => {

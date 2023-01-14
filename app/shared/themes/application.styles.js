@@ -9,9 +9,9 @@ const ApplicationStyles = {
   screen: {
     container: {
       flex: 1,
-      padding: 20,
-      backgroundColor: Colors.transparent,
-    },
+      padding: 10,
+      backgroundColor: Colors.myGrey,
+       },
     section: {
       margin: Metrics.section,
       padding: Metrics.baseMargin,
@@ -19,12 +19,12 @@ const ApplicationStyles = {
     sectionText: {
       ...Fonts.style.normal,
       paddingVertical: Metrics.doubleBaseMargin,
-      color: Colors.white,
+      color: Colors.jhipsterBlue,
       marginVertical: Metrics.smallMargin,
       textAlign: 'center',
     },
     subtitle: {
-      color: Colors.white,
+      color: Colors.myBlue,
       padding: Metrics.smallMargin,
       marginBottom: Metrics.smallMargin,
       marginHorizontal: Metrics.smallMargin,
@@ -54,6 +54,34 @@ const ApplicationStyles = {
       color: 'white',
       alignSelf: 'center',
     },
+    orangebutton: {
+      height: 36,
+      backgroundColor: Colors.transparent,
+      borderColor: Colors.myLightOrange,
+      borderWidth: 1,
+      borderRadius: 8,
+      alignSelf: 'stretch',
+      justifyContent: 'center',
+    },
+    orangebuttonText: {
+      fontSize: 18,
+      color: Colors.myLightOrange,
+      alignSelf: 'center',
+    },
+    purpbutton: {
+      height: 36,
+      backgroundColor: Colors.myLightPurple,
+      borderColor: Colors.myLightPurple,
+      borderWidth: 1,
+      borderRadius: 8,
+      alignSelf: 'stretch',
+      justifyContent: 'center',
+    },
+    purpbuttonText: {
+      fontSize: 18,
+      color: Colors.white,
+      alignSelf: 'center',
+    },
     errorText: {
       color: Colors.error,
       fontSize: 14,
@@ -69,6 +97,14 @@ const ApplicationStyles = {
     label: {
       fontWeight: 'bold',
     },
+    backgroundlabel: {
+      fontSize: 14,
+      color:Colors.black,
+      backgroundColor: Colors.myGrey,
+      padding : 5,
+      borderRadius :15,
+      fontWeight : 'bold',
+     },
     flex: {
       flex: 1,
     },
@@ -82,6 +118,25 @@ const ApplicationStyles = {
       backgroundColor: Colors.jhipsterBlue,
       marginVertical: Metrics.smallMargin,
       justifyContent: 'center',
+    },
+    smallBlackLabel: {
+      color: Colors.black,
+      fontSize: 12,
+      fontFamily: 'Lato-Regular',
+      color: '#666',
+      
+     },
+    purpleLabel: {
+      color: Colors.myPurple,
+      fontWeight: 'bold',
+    },
+    pinkLabel: {
+      color: Colors.myPink,
+      fontWeight: 'bold',
+    },
+    orangeLabel: {
+      color: Colors.myLightOrange,
+      fontWeight: 'bold',
     },
     whiteLabel: {
       color: 'white',

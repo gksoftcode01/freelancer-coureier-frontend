@@ -5,6 +5,16 @@ const colors = {
   white: 'white',
   black: 'black',
   text: '#E0D7E5',
+
+ myGrey : '#d7dde9',
+myYellow : '#fceecb',
+myPink : '#f9cedf',
+myBlue : '#92b2fd',
+
+myLightPurple : '#ccd0f6',
+myLightOrange : '#f594b7',
+myPurple : '#ad7ffb',
+
 };
 
 export default colors;
