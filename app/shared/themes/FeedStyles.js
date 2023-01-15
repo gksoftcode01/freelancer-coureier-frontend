@@ -26,7 +26,7 @@ export const UserInfo = styled.View`
 export const UserRate = styled.View`
     flex-direction: row;
     justify-content: flex-start;
-    padding: 10px;
+    padding: 5px;
  `;
 export const UserImg = styled.Image`
     width: 50px;
@@ -61,6 +61,8 @@ export const PostTime = styled.Text`
     font-size: 12px;
     font-family: 'Lato-Regular';
     color: #666;
+    padding-left:15px;
+    padding-bottom:5px;
 `;
 
 export const PostText = styled.Text`

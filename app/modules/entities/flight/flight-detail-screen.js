@@ -7,9 +7,28 @@ import FlightActions from './flight.reducer';
 import RoundedButton from '../../../shared/components/rounded-button/rounded-button';
 import FlightDeleteModal from './flight-delete-modal';
 import styles from './flight-styles';
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImg,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType
+} from '../../../shared/themes/FeedStyles';
+
+import moment from 'moment/min/moment-with-locales';
 
 function FlightDetailScreen(props) {
-  const { route, getFlight, navigation, flight, fetching, error } = props;
+  const { route, getFlight, navigation, flight, fetching, error,account } = props;
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
   // prevents display of stale reducer data
   const entityId = flight?.id ?? null;
@@ -42,52 +61,80 @@ function FlightDetailScreen(props) {
     );
   }
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="flightDetailScrollView">
-      <Text style={styles.label}>Id:</Text>
-      <Text>{flight.id}</Text>
-      {/* FlightDate Field */}
-      <Text style={styles.label}>FlightDate:</Text>
-      <Text testID="flightDate">{String(flight.flightDate)}</Text>
-      {/* MaxWeight Field */}
-      <Text style={styles.label}>MaxWeight:</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="flightDetailScrollView" key={flight.id}>
+      <Card key={flight.id}>
+      <PostText></PostText>
+       <PostText>
+      <Text style={styles.label}>Flight Date: </Text>
+       <Text  >  { moment(new Date(flight.flightDate)).format('MMMM Do YYYY, h:mm a') } </Text>  
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>Max Weight: </Text>
       <Text testID="maxWeight">{flight.maxWeight}</Text>
-      {/* Notes Field */}
-      <Text style={styles.label}>Notes:</Text>
-      <Text testID="notes">{flight.notes}</Text>
-      {/* Budget Field */}
-      <Text style={styles.label}>Budget:</Text>
+      </PostText> 
+      <PostText>
+      <Text style={styles.label}>Budget: </Text>
       <Text testID="budget">{flight.budget}</Text>
-      {/* CreateDate Field */}
-      <Text style={styles.label}>CreateDate:</Text>
-      <Text testID="createDate">{String(flight.createDate)}</Text>
-      {/* ToDoorAvailable Field */}
-      <Text style={styles.label}>ToDoorAvailable:</Text>
-      <Text testID="toDoorAvailable">{String(flight.toDoorAvailable)}</Text>
-      {/* Status Field */}
-      <Text style={styles.label}>Status:</Text>
-      <Text testID="status">{flight.status}</Text>
-      <Text style={styles.label}>Create By:</Text>
-      <Text testID="createBy">{String(flight.createBy ? flight.createBy.id : '')}</Text>
-      <Text style={styles.label}>From Country:</Text>
-      <Text testID="fromCountry">{String(flight.fromCountry ? flight.fromCountry.name : '')}</Text>
-      <Text style={styles.label}>To Country:</Text>
-      <Text testID="toCountry">{String(flight.toCountry ? flight.toCountry.name : '')}</Text>
-      <Text style={styles.label}>From State:</Text>
-      <Text testID="fromState">{String(flight.fromState ? flight.fromState.name : '')}</Text>
-      <Text style={styles.label}>To State:</Text>
-      <Text testID="toState">{String(flight.toState ? flight.toState.name : '')}</Text>
-      <Text style={styles.label}>From City:</Text>
-      <Text testID="fromCity">{String(flight.fromCity ? flight.fromCity.name : '')}</Text>
-      <Text style={styles.label}>To City:</Text>
-      <Text testID="toCity">{String(flight.toCity ? flight.toCity.name : '')}</Text>
-      <Text style={styles.label}>Available Item Types:</Text>
-      {flight.availableItemTypes &&
-        flight.availableItemTypes.map((entity, index) => (
-          <Text key={index} testID={`availableItemTypes-${index}`}>
-            {String(entity.name || '')}
-          </Text>
-        ))}
+      </PostText> 
+   
+      <PostText>
+      <Text style={styles.label}>Create Date: </Text>
+       <Text  >  { moment(new Date(flight.createDate)).format('MMMM Do YYYY, h:mm a') } </Text>  
+      </PostText>
 
+        <PostText>
+      <Text style={styles.label}>ToDoorAvailable: </Text>
+      <Text testID="toDoorAvailable">{String(flight.toDoorAvailable)}</Text>
+      </PostText>
+
+      <PostText>
+      <Text style={styles.label}>Status: </Text>
+      <Text testID="status">{flight.status}</Text>
+      </PostText>
+
+      <PostText>
+      <Text style={styles.label}>From Country: </Text>
+      <Text testID="fromCountry">{String(flight.fromCountry ? flight.fromCountry.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>To Country: </Text>
+      <Text testID="toCountry">{String(flight.toCountry ? flight.toCountry.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>From State: </Text>
+      <Text testID="fromState">{String(flight.fromState ? flight.fromState.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>To State: </Text>
+      <Text testID="toState">{String(flight.toState ? flight.toState.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>From City: </Text>
+      <Text testID="fromCity">{String(flight.fromCity ? flight.fromCity.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>To City: </Text>
+      <Text testID="toCity">{String(flight.toCity ? flight.toCity.name : '')}</Text>
+      </PostText>
+      <PostText>
+      <Text style={styles.label}>Available Item Types: </Text>
+      {flight.availableItemTypes?.length>0?(<View style={styles.flexRow}> 
+                         {flight.availableItemTypes.map((entity, index) => (
+          <>
+          <Text style={styles.backgroundlabel} key={index} >
+            {String(entity.name || ' ')}   
+          </Text>
+          {' '}
+          </>
+        ))}    </View> ):null}
+        
+     
+</PostText>
+<PostText>
+<Text style={styles.label}>Notes: </Text>
+      <Text testID="notes">{flight.notes}</Text>
+</PostText>
+{account.id==flight.createBy.id? ( 
       <View style={styles.entityButtons}>
         <RoundedButton
           text="Edit"
@@ -111,6 +158,13 @@ function FlightDetailScreen(props) {
           />
         )}
       </View>
+      ):(
+        <View>
+           
+        </View>
+      )}
+      <PostText></PostText>
+      </Card>
     </ScrollView>
   );
 }
@@ -122,6 +176,7 @@ const mapStateToProps = (state) => {
     fetching: state.flights.fetchingOne,
     deleting: state.flights.deleting,
     errorDeleting: state.flights.errorDeleting,
+    account: state.account.account
   };
 };
 

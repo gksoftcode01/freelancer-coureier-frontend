@@ -57,8 +57,7 @@ export const cargoScreens = [
     component: CargoRequestScreen,
     options: {
       title: 'CargoRequests',
-      headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
-      headerRight: () => (
+       headerRight: () => (
         <HeaderBackButton
           label=" New "
           onPress={() => navigate('CargoRequestEdit', { id: undefined })}
@@ -153,7 +152,7 @@ export const flightScreens = [
     component: FlightScreen,
     options: {
       title: 'Flights',
-      headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
+      //headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
       headerRight: () => (
         <HeaderBackButton
           label=" New "
@@ -206,6 +205,12 @@ export const flightScreens = [
     component: AskEditScreen,
     options: { title: 'Edit Ask', headerLeft: () => <HeaderBackButton onPress={() => goBackOrIfParamsOrDefault('AskDetail', 'Ask')} /> },
   },
+  {
+    name: 'AppUserDetail',
+    route: 'AppUser/detail',
+    component: AppUserDetailScreen,
+    options: { title: 'User Details', headerLeft: () => <HeaderBackButton onPress={() => navigate('Flight')} /> },
+  }
 ]
 
 export const getEntityRoutes = () => {

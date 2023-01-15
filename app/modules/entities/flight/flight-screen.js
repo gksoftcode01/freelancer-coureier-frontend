@@ -96,9 +96,11 @@ function FlightScreen(props) {
               onEndReached={handleLoadMore}
               ListEmptyComponent={renderEmpty} 
               renderItem={({item}) => (
-
-                <Card key={item.id}    onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >  
+                <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
+                <Card key={item.id} >
                 <UserInfo>
+                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })} >  
+
                   <UserImg
                   source={
                     item.toUserImg
@@ -106,16 +108,16 @@ function FlightScreen(props) {
                       : require('../../../../assets/avatar3.jpg')
                   }
                   />
+                  
+                  </TouchableOpacity>
                   <UserInfoText>
-                    <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
+                    <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })} >
                       <UserName >
                         {item.createBy.user.firstName  }{' '}
                         {item.createBy.user.lastName  }
                       </UserName>
                     </TouchableOpacity>
-                    <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
-                  </UserInfoText>
-                  <UserRate>
+                    <UserRate>
                   <StarRating
                      rating={2}
                   onChange={()=> {return null;} }
@@ -123,6 +125,8 @@ function FlightScreen(props) {
                      />
                      <Text style={styles.smallBlackLabel}>(25)</Text>
                   </UserRate>
+                  </UserInfoText>
+                 
                 </UserInfo>
                 <PostText>
                 <Text style={styles.orangeLabel}> {item.fromCountry.name}  </Text>
@@ -133,26 +137,25 @@ function FlightScreen(props) {
                        
                  </PostText>
                  <PostText>
-                 <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') }</Text>  
+                 <Text style={styles.label}>  { moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a') } </Text>  
                  {' '}
                  <Text   style={styles.smallBlackLabel}>{Number(item.maxWeight) > 0?` - Max Weight:${Number(item.maxWeight)} KG` :''}</Text>
 
              
                   </PostText>
-                  <PostText>
-                  {item.availableItemTypes &&
-        item.availableItemTypes.map((entity, index) => (
+                  {item.availableItemTypes?.length>0?(<PostText> 
+                         {item.availableItemTypes.map((entity, index) => (
           <>
           <Text style={styles.backgroundlabel} key={index} >
             {String(entity.name || ' ')}   
           </Text>
           {' '}
           </>
-        ))}
+        ))}    </PostText>):null}
+                            <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
 
-                    </PostText>
                         </Card>
-
+                  </TouchableOpacity>
                 // <Card
                 // onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })} >
                 //   <UserInfo>

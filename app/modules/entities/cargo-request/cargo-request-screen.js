@@ -5,6 +5,29 @@ import { useFocusEffect } from '@react-navigation/native';
 import CargoRequestActions from './cargo-request.reducer';
 import styles from './cargo-request-styles';
 import AlertMessage from '../../../shared/components/alert-message/alert-message';
+ 
+
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImg,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType
+} from '../../../shared/themes/FeedStyles';
+
+import moment from 'moment/min/moment-with-locales';
+import { Ionicons } from '@expo/vector-icons';
+import StarRating from 'react-native-star-rating-widget';
 
 function CargoRequestScreen(props) {
   const [page, setPage] = React.useState(0);
@@ -56,7 +79,7 @@ function CargoRequestScreen(props) {
   };
   return (
     <View style={styles.container} testID="cargoRequestScreen">
-      <FlatList
+      {/* <FlatList
         contentContainerStyle={styles.listContent}
         data={cargoRequestList}
         renderItem={renderRow}
@@ -64,7 +87,74 @@ function CargoRequestScreen(props) {
         initialNumToRender={oneScreensWorth}
         onEndReached={handleLoadMore}
         ListEmptyComponent={renderEmpty}
-      />
+      /> */}
+       <FlatList
+              data={cargoRequestList}
+              keyExtractor={(item) => item.id}    
+              initialNumToRender={oneScreensWorth}
+              onEndReached={handleLoadMore}
+              ListEmptyComponent={renderEmpty} 
+              renderItem={({item}) => (
+                <TouchableOpacity onPress={() => props.navigation.navigate('CargoRequestDetail', { entityId: item.id })} >
+                <Card key={item.id} >  
+                <UserInfo>
+                  <UserImg
+                  source={
+                    item.toUserImg
+                      ? item.toUserImg
+                      : require('../../../../assets/avatar3.jpg')
+                  }
+                  />
+                  <UserInfoText>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })} >
+                      <UserName >
+                        {item.createBy?.user.firstName  }{' '}
+                        {item.createBy?.user.lastName  }
+                      </UserName>
+                    </TouchableOpacity>
+                    <UserRate>
+                  <StarRating
+                     rating={2}
+                  onChange={()=> {return null;} }
+                  starSize={18}
+                     />
+                     <Text style={styles.smallBlackLabel}>(25)</Text>
+                  </UserRate>
+                   </UserInfoText>
+                 
+                </UserInfo>
+                <PostText>
+                <Text style={styles.orangeLabel}> {item.fromCountry?.name}  </Text>
+                {' '}   
+                <Ionicons name="airplane-outline" size={18} color={props.tintColor} />
+                {' '} 
+                <Text style={styles.orangeLabel}>  {item.toCountry?.name}  </Text>
+                       
+                 </PostText>
+                 <PostText>
+                 <Text style={styles.label}>  {item.isToDoor?'To Door':'' } </Text>  
+                 {' '}
+                 <Text   style={styles.label}>{Number(item.budget) > 0?` Budget : ${Number(item.budget)} AED` :''}</Text>
+
+             
+                  </PostText>
+                  
+                    {item.reqItemTypes?.length>0?(<PostText> 
+                         {item.reqItemTypes.map((entity, index) => (
+          <>
+          <Text style={styles.backgroundlabel} key={index} >
+            {String(entity.name || ' ')}   
+          </Text>
+          {' '}
+          </>
+        ))}    </PostText>):null}
+                            <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
+
+                        </Card>
+                  </TouchableOpacity>
+            
+              )}
+            />
     </View>
   );
 }
