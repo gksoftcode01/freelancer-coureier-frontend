@@ -7,6 +7,36 @@ import Colors from './colors';
 
 const ApplicationStyles = {
   screen: {
+  
+    userBtnWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      width: '100%',
+      marginBottom: 5,
+      borderRadius : '20%'
+    },
+    yellowdBtn: {
+      borderColor: Colors.myLightOrange,
+      borderWidth: 2,
+      borderRadius: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      marginHorizontal: 5,
+    },
+    yellowdBtnTxt: {
+      color:  Colors.myLightOrange,
+    },
+   blueBtn: {
+      borderColor: Colors.myBlue,
+      borderWidth: 2,
+      borderRadius: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      marginHorizontal: 5,
+    },
+    blueBtnTxt: {
+      color:   Colors.myBlue,
+    },
     container: {
       flex: 1,
       padding: 10,

@@ -23,6 +23,14 @@ export const UserInfo = styled.View`
     justify-content: flex-start;
     padding: 10px 0px 0px 10px;
 `;
+
+export const controlIcons = styled.View`
+    float : right;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 10px  ;
+`;
+
 export const UserRate = styled.View`
     flex-direction: row;
     justify-content: flex-start;
