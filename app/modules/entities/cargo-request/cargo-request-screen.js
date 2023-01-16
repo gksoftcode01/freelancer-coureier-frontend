@@ -108,8 +108,8 @@ function CargoRequestScreen(props) {
                   <UserInfoText>
                     <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })} >
                       <UserName >
-                        {item.createBy?.user.firstName  }{' '}
-                        {item.createBy?.user.lastName  }
+                        {item.createBy?.firstName  }{' '}
+                        {item.createBy?.lastName  }
                       </UserName>
                     </TouchableOpacity>
                     <UserRate>

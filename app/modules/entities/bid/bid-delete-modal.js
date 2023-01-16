@@ -3,16 +3,19 @@ import { TouchableHighlight, Modal, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import BidActions from './bid.reducer';
+import CargoRequestActions from '../cargo-request/cargo-request.reducer';
 
 import styles from './bid-styles';
 
 function BidDeleteModal(props) {
-  const { visible, setVisible, entity, navigation, testID } = props;
+  const { visible, setVisible, entity, navigation, testID ,doDeleteBid } = props;
 
   const deleteEntity = () => {
-    props.deleteBid(entity.id);
-    navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Bid');
-  };
+     props.deleteBid(entity.id);
+    setVisible(false);
+ 
+ //navigation.navigate('CargoRequestDetail', { entityId: cargoRequestId }  );
+  }
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View testID={testID} style={styles.centeredView}>
@@ -28,7 +31,7 @@ function BidDeleteModal(props) {
               }}>
               <Text style={styles.textStyle}>Cancel</Text>
             </TouchableHighlight>
-            <TouchableHighlight style={[styles.openButton, styles.submitButton]} onPress={deleteEntity} testID="deleteButton">
+            <TouchableHighlight style={[styles.openButton, styles.submitButton]} onPress={doDeleteBid} testID="deleteButton">
               <Text style={styles.textStyle}>Delete</Text>
             </TouchableHighlight>
           </View>
@@ -53,6 +56,8 @@ const mapDispatchToProps = (dispatch) => {
     getAllBids: (options) => dispatch(BidActions.bidAllRequest(options)),
     deleteBid: (id) => dispatch(BidActions.bidDeleteRequest(id)),
     resetBids: () => dispatch(BidActions.bidReset()),
+    getCargoRequest: (id) => dispatch(CargoRequestActions.cargoRequestRequest(id)),
+
   };
 };
 

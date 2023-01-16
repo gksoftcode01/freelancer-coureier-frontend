@@ -23,9 +23,14 @@ function SettingsScreen(props) {
   const onSubmit = (data) => {
     setSuccess('');
     setError('');
-    props.updateAccount(data);
+    props.updateAccount(formValueToEntity(data));
   };
-
+  React.useEffect(() => {
+    getAllUsers();
+    getAllCountries();
+    getAllStateProvinces();
+    getAllCities();
+  }, [getAllUsers, getAllCountries, getAllStateProvinces, getAllCities]);
   useDidUpdateEffect(() => {
     if (!props.updating) {
       if (props.error) {
@@ -42,6 +47,14 @@ function SettingsScreen(props) {
   const firstNameRef = createRef();
   const lastNameRef = createRef();
   const emailRef = createRef();
+  const birthDateRef = createRef();
+  const genderRef = createRef();
+  const registerDateRef = createRef();
+  const phoneNumberRef = createRef();
+  const mobileNumberRef = createRef();
+   const countryRef = createRef();
+  const stateProvinceRef = createRef();
+  const cityRef = createRef();
 
   return (
     <KeyboardAwareScrollView
@@ -81,12 +94,122 @@ function SettingsScreen(props) {
           keyboardType="email-address"
           textContentType="username"
         />
+         <FormField
+              name="birthDate"
+              ref={birthDateRef}
+              label="Birth Date"
+              placeholder="Enter Birth Date"
+              testID="birthDateInput"
+              inputType="datetime"
+            />
+            <FormField
+              name="gender"
+              ref={genderRef}
+              label="Gender"
+              placeholder="Enter Gender"
+              testID="genderInput"
+              inputType="select-one"
+              listItems={GenderType}
+              onSubmitEditing={() => registerDateRef.current?.focus()}
+            />
+            <FormField
+              name="registerDate"
+              ref={registerDateRef}
+              label="Register Date"
+              placeholder="Enter Register Date"
+              testID="registerDateInput"
+              inputType="datetime"
+              onSubmitEditing={() => phoneNumberRef.current?.focus()}
+            />
+            <FormField
+              name="phoneNumber"
+              ref={phoneNumberRef}
+              label="Phone Number"
+              placeholder="Enter Phone Number"
+              testID="phoneNumberInput"
+              inputType="text"
+              autoCapitalize="none"
+              onSubmitEditing={() => mobileNumberRef.current?.focus()}
+            />
+            <FormField
+              name="mobileNumber"
+              ref={mobileNumberRef}
+              label="Mobile Number"
+              placeholder="Enter Mobile Number"
+              testID="mobileNumberInput"
+              inputType="text"
+              autoCapitalize="none"
+            />
+                <FormField
+              name="country"
+              inputType="select-one"
+              ref={countryRef}
+              listItems={countryList}
+              listItemLabelField="name"
+              label="Country"
+              placeholder="Select Country"
+              testID="countrySelectInput"
+            />
+            <FormField
+              name="stateProvince"
+              inputType="select-one"
+              ref={stateProvinceRef}
+              listItems={stateProvinceList}
+              listItemLabelField="name"
+              label="State Province"
+              placeholder="Select State Province"
+              testID="stateProvinceSelectInput"
+            />
+            <FormField
+              name="city"
+              inputType="select-one"
+              ref={cityRef}
+              listItems={cityList}
+              listItemLabelField="name"
+              label="City"
+              placeholder="Select City"
+              testID="citySelectInput"
+            />
+
         <FormButton testID="settingsSubmitButton" title={'Save'} />
       </Form>
     </KeyboardAwareScrollView>
   );
 }
-
+const entityToFormValue = (value) => {
+  if (!value) {
+    return {};
+  }
+  return {
+    id: value.id ?? null,
+    birthDate: value.birthDate ?? null,
+    gender: value.gender ?? null,
+    registerDate: value.registerDate ?? null,
+    phoneNumber: value.phoneNumber ?? null,
+    mobileNumber: value.mobileNumber ?? null,
+    user: value.user && value.user.id ? value.user.id : null,
+    country: value.country && value.country.id ? value.country.id : null,
+    stateProvince: value.stateProvince && value.stateProvince.id ? value.stateProvince.id : null,
+    city: value.city && value.city.id ? value.city.id : null,
+  };
+};
+const formValueToEntity = (value) => {
+  const entity = {
+    id: value.id ?? null,
+    firstName : value.firstName ??null,
+    lastName : value.lastName ??null,
+    email: value.email??null,
+    birthDate: value.birthDate ?? null,
+    gender: value.gender ?? null,
+    registerDate: value.registerDate ?? null,
+    phoneNumber: value.phoneNumber ?? null,
+    mobileNumber: value.mobileNumber ?? null,
+  };
+   entity.country = value.country ? { id: value.country } : null;
+  entity.stateProvince = value.stateProvince ? { id: value.stateProvince } : null;
+  entity.city = value.city ? { id: value.city } : null;
+  return entity;
+};
 const mapStateToProps = (state) => {
   return {
     account: state.account.account,

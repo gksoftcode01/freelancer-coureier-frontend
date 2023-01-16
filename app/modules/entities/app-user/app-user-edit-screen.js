@@ -100,7 +100,7 @@ function AppUserEditScreen(props) {
       </View>
     );
   }
-
+ 
   const formRef = createRef();
   const birthDateRef = createRef();
   const genderRef = createRef();
