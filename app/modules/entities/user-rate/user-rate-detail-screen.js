@@ -98,7 +98,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUserRate: (id) => dispatch(UserRateActions.userRateRequest(id)),
+    getUserRate: (options) => dispatch(UserRateActions.userRateRequest(options)),
     getAllUserRates: (options) => dispatch(UserRateActions.userRateAllRequest(options)),
     deleteUserRate: (id) => dispatch(UserRateActions.userRateDeleteRequest(id)),
     resetUserRates: () => dispatch(UserRateActions.userRateReset()),

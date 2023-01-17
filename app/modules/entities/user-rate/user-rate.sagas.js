@@ -16,7 +16,22 @@ function* getUserRate(api, action) {
   } else {
     yield put(UserRateActions.userRateFailure(response.data));
   }
-}
+} 
+
+function* getUserRateCargo(api, action) {
+  const { cargoReqId } = action;
+  // make the call to the api
+  const apiCall = call(api.getUserRateCargo, cargoReqId);
+  const response = yield call(callApi, apiCall);
+
+  // success?
+  if (response.ok) {
+    response.data = mapDateFields(response.data);
+    yield put(UserRateActions.userRateAllSuccess(response.data));
+  } else {
+    yield put(UserRateActions.userRateAllFailure(response.data));
+  }
+} 
 
 function* getAllUserRates(api, action) {
   const { options } = action;
@@ -71,4 +86,5 @@ export default {
   getUserRate,
   deleteUserRate,
   updateUserRate,
+  getUserRateCargo
 };

@@ -77,8 +77,9 @@ const create = (baseURL = AppConfig.apiUrl) => {
   const createCity = (city) => api.post('api/cities', city);
   const updateCity = (city) => api.put(`api/cities/${city.id}`, city);
   const deleteCity = (cityId) => api.delete('api/cities/' + cityId);
-
+ 
   const getUserRate = (userRateId) => api.get('api/user-rates/' + userRateId);
+  const getUserRateCargo = (cargoReqId) => api.get('api/user-rates-cargo/' + cargoReqId);
   const getAllUserRates = (options) => api.get('api/user-rates', options);
   const createUserRate = (userRate) => api.post('api/user-rates', userRate);
   const updateUserRate = (userRate) => api.put(`api/user-rates/${userRate.id}`, userRate);
@@ -178,7 +179,8 @@ const create = (baseURL = AppConfig.apiUrl) => {
     getAllUserRates,
     getUserRate,
     deleteUserRate,
-
+    getUserRateCargo,
+    
     createItemTypes,
     updateItemTypes,
     getAllItemTypes,

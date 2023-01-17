@@ -1,5 +1,5 @@
 import React, { createRef } from 'react';
-import { ActivityIndicator, ScrollView, Text, View, TouchableOpacity, Modal, TouchableHighlight ,TextInput} from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View, TouchableOpacity, Modal, TouchableHighlight, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -42,8 +42,25 @@ import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import UserRateActions from '../user-rate/user-rate.reducer';
 
 function CargoRequestDetailScreen(props) {
-  const { route, getCargoRequest, updateCargoRequest,errorUpdating,
-    updateSuccess, navigation, cargoRequest, fetching, error, account, updateBid, testID,deleteBid  ,updateUserRate} = props;
+  const {
+    route,
+    getCargoRequest,
+    updateCargoRequest,
+    errorUpdating,
+    updateSuccess,
+    navigation,
+    cargoRequest,
+    fetching,
+    error,
+    account,
+    updateBid,
+    testID,
+    deleteBid,
+    updateUserRate,
+    getAllUserRates,
+    userRateList,
+    rateUpdateSuccess
+  } = props;
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
   const [deleteBidModalVisible, setDeleteBidModalVisible] = React.useState(false);
   const [addBidModalVisible, setAddBidModalVisible] = React.useState(false);
@@ -55,19 +72,37 @@ function CargoRequestDetailScreen(props) {
   const entityId = cargoRequest?.id ?? null;
   const routeEntityId = route.params?.entityId ?? null;
   const correctEntityLoaded = routeEntityId && entityId && routeEntityId.toString() === entityId.toString();
- 
-  const [rating, setRating] = React.useState(0);
-  const [userNotes, onChangeText] = React.useState('');
-  
-    useFocusEffect(
-      React.useCallback(() => {
-        if(bidToDelete>0)
-       setDeleteBidModalVisible(true);
-       else
-       setDeleteBidModalVisible(false);
+
+  const [ratingIdCourier, setRatingIdCourier] = React.useState(null);
+  const [ratingCourier, setRatingCourier] = React.useState(0);
+  const [userNotesCourier, onChangeTextCourier] = React.useState('');
+
+  const [ratingIdRequester, setRatingIdRequester] = React.useState(null);
+  const [ratingRequester, setRatingRequester] = React.useState(0);
+  const [userNotesRequester, onChangeTextRequester] = React.useState('');
+  const [page, setPage] = React.useState(0);
+  const [sort /*, setSort*/] = React.useState('id,asc');
+  const [size /*, setSize*/] = React.useState(20);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (bidToDelete > 0) setDeleteBidModalVisible(true);
+      else setDeleteBidModalVisible(false);
     }, [bidToDelete]),
-    );
- 
+  );
+  React.useEffect(() => {
+    userRateList.forEach((userRate) => {
+      if (userRate.isCourier == 1) {
+        setRatingCourier(userRate.rate);
+        onChangeTextCourier(userRate.note);
+        setRatingIdCourier(userRate.id);
+      } else if (userRate.isCourier == 0) {
+        setRatingRequester(userRate.rate);
+        onChangeTextRequester(userRate.note);
+        setRatingIdRequester(userRate.id);
+      }
+    });
+  }, [userRateList]);
+
   useFocusEffect(
     React.useCallback(() => {
       if (!routeEntityId) {
@@ -77,10 +112,11 @@ function CargoRequestDetailScreen(props) {
         setDeleteBidModalVisible(false);
 
         getCargoRequest(routeEntityId);
+        getAllUserRates({ page: page, sort, size , cargoId :routeEntityId });  
       }
     }, [routeEntityId, getCargoRequest, navigation]),
   );
- 
+
   if (!entityId && !fetching && error) {
     return (
       <View style={styles.loading}>
@@ -88,31 +124,31 @@ function CargoRequestDetailScreen(props) {
       </View>
     );
   }
- 
+
   const updateBidStatus = (bid, status) => {
     setBidToChange(bid);
     setBidStatus(status);
     setStatusModalVisible(true);
   };
-const confirmChange = () =>{
-  const item2 = Object.assign({}, bidToChange);
+  const confirmChange = () => {
+    const item2 = Object.assign({}, bidToChange);
     item2.status = bidStatus;
     item2.cargoRequest = cargoRequest;
     updateBid(item2);
     if (bidStatus == 'Approve') {
       const cargoRequest2 = Object.assign({}, cargoRequest);
       console.log(cargoRequest2);
-      cargoRequest2.status = {id:2}; //finished
+      cargoRequest2.status = { id: 2 }; //finished
       cargoRequest2.agreedPrice = bidToChange.price;
-      cargoRequest2.takenBy  = {id: bidToChange.fromUser.id}   ;
+      cargoRequest2.takenBy = { id: bidToChange.fromUser.id };
       updateCargoRequest(cargoRequest2);
-      } 
-      setTimeout(() => {
-        getCargoRequest(routeEntityId);
-      }, 1000);
-    
+    }
+    setTimeout(() => {
+      getCargoRequest(routeEntityId);
+    }, 1000);
+
     setStatusModalVisible(false);
-}
+  };
   const formRef = createRef();
   const notesRef = createRef();
   const priceRef = createRef();
@@ -124,8 +160,8 @@ const confirmChange = () =>{
       price: value.price ?? null,
       status: 'New',
     };
-    entity.fromUser = {id : account.id};
-    entity.cargoRequest ={id : cargoRequest.id};
+    entity.fromUser = { id: account.id };
+    entity.cargoRequest = { id: cargoRequest.id };
     return entity;
   };
 
@@ -134,19 +170,33 @@ const confirmChange = () =>{
     setAddBidModalVisible(false);
     getCargoRequest(routeEntityId);
   };
- const saveRate =()=>{
-  const entity = {
-    id: null,
-    rate: rating ?? null,
-    note: userNotes ?? null,
-    rateDate: moment.now(),
-    isCourier : 1,
-  };
-  entity.cargoRequest = cargoRequest;
-  entity.user = cargoRequest.takenBy;
+  const saveRateCourier = () => {
+    const entity = {
+      id: ratingIdCourier,
+      rate: ratingCourier ?? null,
+      note: userNotesCourier ?? null,
+      rateDate: moment.now(),
+      isCourier: 1,
+    };
+    entity.cargoRequest = cargoRequest;
+    entity.user = cargoRequest.takenBy;
     updateUserRate(entity);
+  };
 
- }
+  const saveRateRequester = () => {
+    const entity = {
+      id: ratingIdRequester,
+      rate: ratingRequester ?? null,
+      note: userNotesRequester ?? null,
+      rateDate: moment.now(),
+
+      isCourier: 0,
+    };
+    entity.cargoRequest = cargoRequest;
+    entity.user = cargoRequest.createBy;
+    updateUserRate(entity);
+  };
+
   if (!entityId || fetching || !correctEntityLoaded) {
     return (
       <View style={styles.loading}>
@@ -178,19 +228,16 @@ const confirmChange = () =>{
               />
             )}
           </ControlIcons>
-        ) : cargoRequest.status.id==1?(
-          <ControlIcons  style={{ width: '100%', textAlign: 'right', padding: 0 }}>
-           <TouchableOpacity  onPress={() => setAddBidModalVisible(true)}>
-          <Text style={styles.blueBtnTxt}> Add bid  <Ionicons
-              name="add-circle-outline"
-              size={32}
-              color={'blue'}
-            />   </Text> 
-         
-        
-        </TouchableOpacity>
-         </ControlIcons>
-        ):(null)}
+        ) : cargoRequest.status.id == 1 ? (
+          <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
+            <TouchableOpacity onPress={() => setAddBidModalVisible(true)}>
+              <Text style={styles.blueBtnTxt}>
+                {' '}
+                Add bid <Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
+              </Text>
+            </TouchableOpacity>
+          </ControlIcons>
+        ) : null}
 
         <PostText>
           <Text style={styles.label}>Budget: </Text>
@@ -204,9 +251,8 @@ const confirmChange = () =>{
           <Text style={styles.label}>CreateDate: </Text>
           <Text testID="createDate"> {moment(new Date(cargoRequest.createDate)).format('MMMM Do YYYY, h:mm a')}</Text>
         </PostText>
-   
+
         <PostText>
-    
           <Text style={styles.label}>From Country: </Text>
           <Text testID="fromCountry">{String(cargoRequest.fromCountry ? cargoRequest.fromCountry.name : '')}</Text>
         </PostText>
@@ -255,54 +301,87 @@ const confirmChange = () =>{
             </View>
           ) : null}
         </PostText>
-        { cargoRequest.status.id==2?(
+        {cargoRequest.status.id == 2 ? (
           <>
-          <View style={{textAlign:'center'}} >
-            <Text style={styles.label} color={'red'}>
-                 This cargo request has been closed
+            <View style={{ textAlign: 'center' }}>
+              <Text style={styles.label} color={'red'}>
+                This cargo request has been closed
               </Text>
             </View>
-        <PostText>
-       <Text style={styles.label}>Taken By: </Text>
-      <Text >{String(cargoRequest.takenBy ? `${cargoRequest.takenBy?.firstName} ${cargoRequest.takenBy?.lastName}`: '')}</Text> 
-      </PostText>
-      <PostText>
-          <Text style={styles.label}>AgreedPrice: </Text>
-          <Text testID="agreedPrice">{cargoRequest.agreedPrice} AED</Text>
-        </PostText>
-        <View style={{padding:'10'}} >
-                     <StarRating
-                      rating={rating}
-                      onChange={setRating}
-                      starSize={24}
-                    />
-                   </View>
-                   <PostText>
-                   <Text style={styles.label}>comments: </Text>
-                   </PostText>
-                   <View>
-        <TextInput 
-        editable
-        multiline
-        numberOfLines={4}
-        maxLength={400}
-        onChangeText={text => onChangeText(text)}
-        value={userNotes}
-        style={{padding: '10',width:'100%',border:'1px solid black'}}
-      />
-    </View>
-   
-     <View style={styles.userBtnWrapper}>
-                  <TouchableOpacity style={styles.blueBtn} onPress={() => saveRate()}>
+            <PostText>
+              <Text style={styles.label}>Taken By: </Text>
+              <Text>{String(cargoRequest.takenBy ? `${cargoRequest.takenBy?.firstName} ${cargoRequest.takenBy?.lastName}` : '')}</Text>
+            </PostText>
+            <PostText>
+              <Text style={styles.label}>AgreedPrice: </Text>
+              <Text testID="agreedPrice">{cargoRequest.agreedPrice} AED</Text>
+            </PostText>
+            {cargoRequest.createBy.id == account.id ? (
+              <>
+                <PostText>
+                  <Text style={styles.label}> Please rate the freelance courier: </Text>
+                </PostText>
+                <View style={{ padding: '10' }}>
+                  <StarRating rating={ratingCourier} onChange={setRatingCourier} starSize={24} />
+                </View>
+                <PostText>
+                  <Text style={styles.label}>comments: </Text>
+                </PostText>
+                <View>
+                  <TextInput
+                    editable
+                    multiline
+                    numberOfLines={4}
+                    maxLength={400}
+                    onChangeText={(text) => onChangeTextCourier(text)}
+                    value={userNotesCourier}
+                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                  />
+                </View>
+
+                <View style={styles.userBtnWrapper}>
+                  <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateCourier()}>
                     <Text style={styles.blueBtnTxt}> Save </Text>
                   </TouchableOpacity>
-                  </View>
-    
-      </>
-        ): (null) }
-        
+                </View>
+                <View style={{textAlign:'center'}}>
+                <AlertMessage title="Saved!" show={rateUpdateSuccess} />
+                </View>
+              </>
+            ) :cargoRequest.takenBy.id == account.id ? (
+              <>
+                <PostText>
+                  <Text style={styles.label}> Please rate the client: </Text>
+                </PostText>
+                <View style={{ padding: '10' }}>
+                  <StarRating rating={ratingRequester} onChange={setRatingRequester} starSize={24} />
+                </View>
+                <PostText>
+                  <Text style={styles.label}>comments: </Text>
+                </PostText>
+                <View>
+                  <TextInput
+                    editable
+                    multiline
+                    numberOfLines={4}
+                    maxLength={400}
+                    onChangeText={(text) => onChangeTextRequester(text)}
+                    value={userNotesRequester}
+                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                  />
+                </View>
 
-
+                <View style={styles.userBtnWrapper}>
+                  <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateRequester()}>
+                    <Text style={styles.blueBtnTxt}> Save </Text>
+                  </TouchableOpacity>
+                  <AlertMessage title="Saved!" show={rateUpdateSuccess} />
+                </View>
+             
+              </>
+            ) : null}
+          </>
+        ) : null}
       </Card>
 
       {/* <FlatList
@@ -311,7 +390,7 @@ const confirmChange = () =>{
          ListEmptyComponent={renderEmpty}
         renderItem={({ item }) => (  */}
       {cargoRequest.status != 1 && cargoRequest.bids?.length > 0
-        ? cargoRequest.bids.map((item, index) => (
+        ? cargoRequest.bids.map((item, index) => ( 
             <Card key={item.id}>
               <UserInfo>
                 <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id })}>
@@ -342,7 +421,9 @@ const confirmChange = () =>{
               <PostText>
                 <Text style={styles.label}> {item.notes}</Text>{' '}
               </PostText>
-              { item.status == 'New' && account.id == cargoRequest.createBy.id ? (
+              {cargoRequest.status.id != 2 ? (
+                <> 
+              {item.status == 'New' && account.id == cargoRequest.createBy.id ? (
                 <View style={styles.userBtnWrapper}>
                   <TouchableOpacity style={styles.blueBtn} onPress={() => updateBidStatus(item, 'Approve')}>
                     <Text style={styles.blueBtnTxt}> Approve </Text>
@@ -360,15 +441,16 @@ const confirmChange = () =>{
                   </TouchableOpacity>
                 </View>
               ) : null}
-            
-            {item.status != 'New'  ? (
+   </>
+              ):(null)}
+              {item.status != 'New' ? (
                 <View style={styles.centeredView}>
-                     <Text style={[{color : item.status=='Approve'?Colors.jhipsterBlue:'red'},styles.label]}> 
-                    { item.status=='Approve'?'Approved':'Rejected' }
-                      </Text>
-                 </View>
+                  <Text style={[{ color: item.status == 'Approve' ? Colors.jhipsterBlue : 'red' }, styles.label]}>
+                    {item.status == 'Approve' ? 'Approved' : 'Rejected'}
+                  </Text>
+                </View>
               ) : null}
-
+          
               <PostTime>{moment(new Date(item.createDate)).fromNow()}</PostTime>
             </Card>
           ))
@@ -381,7 +463,7 @@ const confirmChange = () =>{
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           contentContainerStyle={styles.paddedScrollView}>
-          <View   style={styles.centeredView}>
+          <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Form onSubmit={onSubmit} ref={formRef}>
                 <FormField name="price" ref={priceRef} label="bid amount" placeholder="Enter bid amount (AED)" inputType="number" />
@@ -405,8 +487,8 @@ const confirmChange = () =>{
                     }}>
                     <Text style={styles.textStyle}>Cancel</Text>
                   </TouchableHighlight>
-               
-                 <FormButton title={'Save'}  />
+
+                  <FormButton title={'Save'} />
                 </View>
               </Form>
             </View>
@@ -415,56 +497,59 @@ const confirmChange = () =>{
       </Modal>
 
       <Modal animationType="slide" transparent={true} visible={deleteBidModalVisible}>
-      <View   style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={[styles.flex, styles.flexRow]}>
-            <Text style={styles.modalText}>Delete Bid  ?</Text>
-          </View>
-          <View style={[styles.flexRow]}>
-            <TouchableHighlight
-              style={[styles.openButton, styles.cancelButton]}
-              onPress={() => {
-                setBidToDelete(0);
-              }}>
-              <Text style={styles.textStyle}>Cancel</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={[styles.openButton, styles.submitButton]} 
-                 onPress={()=> {  deleteBid(bidToDelete);
-                  setBidToDelete(0); 
-                    setTimeout(() => {
-                      getCargoRequest(routeEntityId);
-                    }, 1000);   }}  >
-              <Text style={styles.textStyle}>Delete</Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>
-    </Modal>
-
-
-    <Modal animationType="slide" transparent={true} visible={statusModalVisible}>
-      <View testID={testID} style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={[styles.flex, styles.flexRow]}>
-            <Text style={styles.modalText}>    {bidStatus} {bidToChange?.fromUser?.firstName} bid ?</Text>
-          </View>
-          <View style={[styles.flexRow]}>
-            <TouchableHighlight
-              style={[styles.openButton, styles.cancelButton]}
-              onPress={() => {
-                setStatusModalVisible(false);
-              }}>
-              <Text style={styles.textStyle}>Cancel</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={[styles.openButton, styles.submitButton]} 
-                 onPress={confirmChange}  >
-              <Text style={styles.textStyle}>Confirm</Text>
-            </TouchableHighlight>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={[styles.flex, styles.flexRow]}>
+              <Text style={styles.modalText}>Delete Bid ?</Text>
+            </View>
+            <View style={[styles.flexRow]}>
+              <TouchableHighlight
+                style={[styles.openButton, styles.cancelButton]}
+                onPress={() => {
+                  setBidToDelete(0);
+                }}>
+                <Text style={styles.textStyle}>Cancel</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={[styles.openButton, styles.submitButton]}
+                onPress={() => {
+                  deleteBid(bidToDelete);
+                  setBidToDelete(0);
+                  setTimeout(() => {
+                    getCargoRequest(routeEntityId);
+                  }, 1000);
+                }}>
+                <Text style={styles.textStyle}>Delete</Text>
+              </TouchableHighlight>
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
-    
+      </Modal>
+
+      <Modal animationType="slide" transparent={true} visible={statusModalVisible}>
+        <View testID={testID} style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={[styles.flex, styles.flexRow]}>
+              <Text style={styles.modalText}>
+                {' '}
+                {bidStatus} {bidToChange?.fromUser?.firstName} bid ?
+              </Text>
+            </View>
+            <View style={[styles.flexRow]}>
+              <TouchableHighlight
+                style={[styles.openButton, styles.cancelButton]}
+                onPress={() => {
+                  setStatusModalVisible(false);
+                }}>
+                <Text style={styles.textStyle}>Cancel</Text>
+              </TouchableHighlight>
+              <TouchableHighlight style={[styles.openButton, styles.submitButton]} onPress={confirmChange}>
+                <Text style={styles.textStyle}>Confirm</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -479,7 +564,9 @@ const mapStateToProps = (state) => {
     account: state.account.account,
     updateSuccess: state.cargoRequests.updateSuccess,
     errorUpdating: state.cargoRequests.errorUpdating,
-    
+    userRateList: state.userRates.userRateList,
+    rateUpdateSuccess: state.userRates.updateSuccess,
+
   };
 };
 
@@ -490,11 +577,11 @@ const mapDispatchToProps = (dispatch) => {
     deleteCargoRequest: (id) => dispatch(CargoRequestActions.cargoRequestDeleteRequest(id)),
     resetCargoRequests: () => dispatch(CargoRequestActions.cargoRequestReset()),
     updateBid: (bid) => dispatch(BidActions.bidUpdateRequest(bid)),
-    updateCargoRequest: (cargoRequest) => dispatch(CargoRequestActions.cargoRequestUpdateRequest(cargoRequest)) ,
+    updateCargoRequest: (cargoRequest) => dispatch(CargoRequestActions.cargoRequestUpdateRequest(cargoRequest)),
     deleteBid: (id) => dispatch(BidActions.bidDeleteRequest(id)),
     updateUserRate: (userRate) => dispatch(UserRateActions.userRateUpdateRequest(userRate)),
-
-    };
+    getAllUserRates: (options) => dispatch(UserRateActions.userRateAllRequest(options)),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CargoRequestDetailScreen);
