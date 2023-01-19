@@ -140,6 +140,7 @@ function FlightEditScreen(props) {
               placeholder="Enter Flight Date"
               testID="flightDateInput"
               inputType="datetime"
+              required="true"
               onSubmitEditing={() => maxWeightRef.current?.focus()}
             />
             <FormField
@@ -178,6 +179,7 @@ function FlightEditScreen(props) {
               testID="createDateInput"
               inputType="datetime"
               onSubmitEditing={() => toDoorAvailableRef.current?.focus()}
+              hidden="true"
             />
             <FormField
               name="toDoorAvailable"
@@ -195,17 +197,9 @@ function FlightEditScreen(props) {
               testID="statusInput"
               inputType="select-one"
               listItems={FlightStatus}
+            
             />
-            <FormField
-              name="createBy"
-              inputType="select-one"
-              ref={createByRef}
-              listItems={appUserList}
-              listItemLabelField="id"
-              label="Create By"
-              placeholder="Select Create By"
-              testID="appUserSelectInput"
-            />
+       
             <FormField
               name="fromCountry"
               inputType="select-one"
@@ -215,6 +209,7 @@ function FlightEditScreen(props) {
               label="From Country"
               placeholder="Select From Country"
               testID="countrySelectInput"
+              required="true"
             />
             <FormField
               name="toCountry"
@@ -225,6 +220,7 @@ function FlightEditScreen(props) {
               label="To Country"
               placeholder="Select To Country"
               testID="countrySelectInput"
+              required="true"
             />
             <FormField
               name="fromState"
@@ -298,7 +294,7 @@ const entityToFormValue = (value) => {
     budget: value.budget ?? null,
     createDate: value.createDate ?? null,
     toDoorAvailable: value.toDoorAvailable ?? null,
-    status: value.status ?? null,
+    status: value.status ?? 'Available',
     createBy: value.createBy && value.createBy.id ? value.createBy.id : null,
     fromCountry: value.fromCountry && value.fromCountry.id ? value.fromCountry.id : null,
     toCountry: value.toCountry && value.toCountry.id ? value.toCountry.id : null,
@@ -320,7 +316,7 @@ const formValueToEntity = (value) => {
     toDoorAvailable: value.toDoorAvailable === null ? false : Boolean(value.toDoorAvailable),
     status: value.status ?? null,
   };
-  entity.createBy = value.createBy ? { id: value.createBy } : null;
+  entity.createBy = flight.createBy ?flight.createBy: null;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
   entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
   entity.fromState = value.fromState ? { id: value.fromState } : null;

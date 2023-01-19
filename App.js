@@ -4,6 +4,7 @@ import createStore from './app/shared/reducers';
 import * as SplashScreen from 'expo-splash-screen';
 
 import NavContainer from './app/navigation/nav-container';
+import { NotifierWrapper } from 'react-native-notifier';
 
 const store = createStore();
 
@@ -20,7 +21,9 @@ export default function App() {
 
   return displayApp ? (
     <Provider store={store}>
+        <NotifierWrapper> 
       <NavContainer />
+      </NotifierWrapper>
     </Provider>
   ) : null;
 }

@@ -49,7 +49,7 @@ function FlightScreen(props) {
       <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })}>
         <View style={styles.listRow}>
           <Text style={styles.whiteLabel}>
-            From: {item.fromCountry.name} to: {item.toCountry.name}{' '}
+            From: {item.fromCountry?.name} to: {item.toCountry?.name}{' '}
           </Text>
           <Text style={styles.label}>{new Date(item.flightDate).toLocaleString()}</Text>
         </View>
@@ -110,20 +110,20 @@ function FlightScreen(props) {
                   </TouchableOpacity>
                   <UserRate>
                     <StarRating
-                      rating={2}
+                      rating={item.createBy.avgRateCourier}
                       onChange={() => {
                         return null;
                       }}
                       starSize={18}
                     />
-                    <Text style={styles.smallBlackLabel}>(25)</Text>
+                    <Text style={styles.smallBlackLabel}>({item.createBy.totalRateCourier})</Text>
                   </UserRate>
                 </UserInfoText>
               </UserInfo>
               <PostText>
-                <Text style={styles.orangeLabel}> {item.fromCountry.name} </Text>{' '}
+                <Text style={styles.orangeLabel}> {item.fromCountry?.name} </Text>{' '}
                 <Ionicons name="airplane-outline" size={18} color={props.tintColor} />{' '}
-                <Text style={styles.orangeLabel}> {item.toCountry.name} </Text>
+                <Text style={styles.orangeLabel}> {item.toCountry?.name} </Text>
               </PostText>
               <PostText>
                 <Text style={styles.label}> {moment(new Date(item.flightDate)).format('MMMM Do YYYY, h:mm a')} </Text>{' '}

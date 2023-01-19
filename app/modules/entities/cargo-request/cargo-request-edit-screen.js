@@ -167,6 +167,7 @@ function CargoRequestEditScreen(props) {
               label="Status"
               placeholder="Select Status"
               testID="cargoRequestStatusSelectInput"
+              hidden="true"
             />
             <FormField
               name="createBy"
@@ -298,7 +299,7 @@ const formValueToEntity = (value) => {
     createDate: value.createDate ?? null,
     agreedPrice: value.agreedPrice ?? null,
   };
-  entity.status = value.status ? { id: value.status } : null;
+  entity.status = value.status ? { id: value.status } : 1;
   entity.createBy = value.createBy ? { id: value.createBy } : null;
   entity.takenBy = value.takenBy ? { id: value.takenBy } : null;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;

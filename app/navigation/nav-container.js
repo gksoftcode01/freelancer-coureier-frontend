@@ -31,7 +31,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
-
+import colors from '../shared/themes/colors'
 const linking = {
   prefixes: ['rnapp://', Linking.makeUrl('/')],
   config: {
@@ -110,13 +110,17 @@ function NavContainer(props) {
   ) : (
     <NavigationContainer /*theme={scheme === 'dark' ? DarkTheme : DefaultTheme}*/
        ref={navigationRef}
+     
       onReady={() => {
         isReadyRef.current = true;
       }}>
          <Tab.Navigator
+           initialRouteName="Home"
+           firstRoute ="Home"
+           
     screenOptions={{
       activeTintColor: '#2e64e5',
-    }}>
+          }}>
     
     <Tab.Screen
       name="Flights"

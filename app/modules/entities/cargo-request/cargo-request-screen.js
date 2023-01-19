@@ -114,11 +114,11 @@ function CargoRequestScreen(props) {
                     </TouchableOpacity>
                     <UserRate>
                   <StarRating
-                     rating={2}
+                     rating={item.createBy?.avgRateClient}
                   onChange={()=> {return null;} }
                   starSize={18}
                      />
-                     <Text style={styles.smallBlackLabel}>(25)</Text>
+                     <Text style={styles.smallBlackLabel}>({item.createBy?.totalRateClient})</Text>
                   </UserRate>
                    </UserInfoText>
                  

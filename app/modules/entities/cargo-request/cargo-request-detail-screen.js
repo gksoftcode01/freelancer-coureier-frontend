@@ -40,6 +40,7 @@ import FormField from '../../../shared/components/form/jhi-form-field';
 import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import UserRateActions from '../user-rate/user-rate.reducer';
+import { Notifier, Easing } from 'react-native-notifier';
 
 function CargoRequestDetailScreen(props) {
   const {
@@ -59,7 +60,7 @@ function CargoRequestDetailScreen(props) {
     updateUserRate,
     getAllUserRates,
     userRateList,
-    rateUpdateSuccess
+     
   } = props;
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
   const [deleteBidModalVisible, setDeleteBidModalVisible] = React.useState(false);
@@ -117,6 +118,8 @@ function CargoRequestDetailScreen(props) {
     }, [routeEntityId, getCargoRequest, navigation]),
   );
 
+   
+  
   if (!entityId && !fetching && error) {
     return (
       <View style={styles.loading}>
@@ -170,6 +173,21 @@ function CargoRequestDetailScreen(props) {
     setAddBidModalVisible(false);
     getCargoRequest(routeEntityId);
   };
+
+  const showNotify =()=>{
+    if(updateSuccess){
+      Notifier.showNotification({
+        title: 'Rating',
+        description: 'Saved successfully!',
+        duration: 3000,
+        showAnimationDuration: 800,
+        showEasing: Easing.bounce,
+        onHidden: () => console.log('Hidden'),
+        onPress: () => console.log('Press'),
+        hideOnPress: false,
+      });
+    }
+  }
   const saveRateCourier = () => {
     const entity = {
       id: ratingIdCourier,
@@ -181,6 +199,7 @@ function CargoRequestDetailScreen(props) {
     entity.cargoRequest = cargoRequest;
     entity.user = cargoRequest.takenBy;
     updateUserRate(entity);
+    showNotify();
   };
 
   const saveRateRequester = () => {
@@ -195,6 +214,7 @@ function CargoRequestDetailScreen(props) {
     entity.cargoRequest = cargoRequest;
     entity.user = cargoRequest.createBy;
     updateUserRate(entity);
+    showNotify();
   };
 
   if (!entityId || fetching || !correctEntityLoaded) {
@@ -204,6 +224,10 @@ function CargoRequestDetailScreen(props) {
       </View>
     );
   }
+
+  
+ 
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="cargoRequestDetailScrollView">
       <Card key={cargoRequest.id}>
@@ -316,6 +340,7 @@ function CargoRequestDetailScreen(props) {
               <Text style={styles.label}>AgreedPrice: </Text>
               <Text testID="agreedPrice">{cargoRequest.agreedPrice} AED</Text>
             </PostText>
+       
             {cargoRequest.createBy.id == account.id ? (
               <>
                 <PostText>
@@ -344,9 +369,7 @@ function CargoRequestDetailScreen(props) {
                     <Text style={styles.blueBtnTxt}> Save </Text>
                   </TouchableOpacity>
                 </View>
-                <View style={{textAlign:'center'}}>
-                <AlertMessage title="Saved!" show={rateUpdateSuccess} />
-                </View>
+                 
               </>
             ) :cargoRequest.takenBy.id == account.id ? (
               <>
@@ -375,8 +398,7 @@ function CargoRequestDetailScreen(props) {
                   <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateRequester()}>
                     <Text style={styles.blueBtnTxt}> Save </Text>
                   </TouchableOpacity>
-                  <AlertMessage title="Saved!" show={rateUpdateSuccess} />
-                </View>
+                 </View>
              
               </>
             ) : null}
@@ -385,11 +407,11 @@ function CargoRequestDetailScreen(props) {
       </Card>
 
       {/* <FlatList
-        data={cargoRequest.bids}
+        data={cargoRequest.bids} 
         keyExtractor={(item) => item.id}
          ListEmptyComponent={renderEmpty}
         renderItem={({ item }) => (  */}
-      {cargoRequest.status != 1 && cargoRequest.bids?.length > 0
+      {cargoRequest.bids?.length > 0  /*cargoRequest.status != 1 && */
         ? cargoRequest.bids.map((item, index) => ( 
             <Card key={item.id}>
               <UserInfo>
@@ -404,13 +426,13 @@ function CargoRequestDetailScreen(props) {
                   </TouchableOpacity>
                   <UserRate>
                     <StarRating
-                      rating={2}
+                      rating={item.fromUser?.avgRateCourier}
                       onChange={() => {
                         return null;
                       }}
                       starSize={18}
                     />
-                    <Text style={styles.smallBlackLabel}>(25)</Text>
+                    <Text style={styles.smallBlackLabel}>({item.fromUser?.totalRateCourier})</Text>
                   </UserRate>
                 </UserInfoText>
               </UserInfo>
@@ -562,10 +584,10 @@ const mapStateToProps = (state) => {
     deleting: state.cargoRequests.deleting,
     errorDeleting: state.cargoRequests.errorDeleting,
     account: state.account.account,
-    updateSuccess: state.cargoRequests.updateSuccess,
+    //updateSuccess: state.cargoRequests.updateSuccess,
     errorUpdating: state.cargoRequests.errorUpdating,
     userRateList: state.userRates.userRateList,
-    rateUpdateSuccess: state.userRates.updateSuccess,
+    updateSuccess: state.userRates.updateSuccess,
 
   };
 };
