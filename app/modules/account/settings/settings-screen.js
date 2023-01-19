@@ -12,6 +12,28 @@ import FormField from '../../../shared/components/form/jhi-form-field';
 import Form from '../../../shared/components/form/jhi-form';
 
 function SettingsScreen(props) {
+
+  const GenderType = [
+    {
+      label: 'Male',
+      value: 'Male',
+    },
+    {
+      label: 'Femal',
+      value: 'Femal',
+    } 
+  ];
+
+
+  const {
+   
+    getAllCountries,
+    countryList,
+    getAllStateProvinces,
+    stateProvinceList,
+    getAllCities,
+    cityList,
+  } = props;
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
 
@@ -26,11 +48,11 @@ function SettingsScreen(props) {
     props.updateAccount(formValueToEntity(data));
   };
   React.useEffect(() => {
-    getAllUsers();
-    getAllCountries();
-    getAllStateProvinces();
-    getAllCities();
-  }, [getAllUsers, getAllCountries, getAllStateProvinces, getAllCities]);
+     getAllCountries();
+   // getAllStateProvinces();
+  //  getAllCities();
+  //, getAllStateProvinces, getAllCities
+  }, [  getAllCountries]);
   useDidUpdateEffect(() => {
     if (!props.updating) {
       if (props.error) {
@@ -94,14 +116,14 @@ function SettingsScreen(props) {
           keyboardType="email-address"
           textContentType="username"
         />
-         <FormField
+         {/* <FormField
               name="birthDate"
               ref={birthDateRef}
               label="Birth Date"
               placeholder="Enter Birth Date"
               testID="birthDateInput"
               inputType="datetime"
-            />
+            /> */}
             <FormField
               name="gender"
               ref={genderRef}
@@ -222,6 +244,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateAccount: (account) => dispatch(AccountActions.accountUpdateRequest(account)),
     getAccount: () => dispatch(AccountActions.accountRequest()),
+    getAllCountries: (options) => dispatch(CountryActions.countryAllRequest(options)),
+    getAllStateProvinces: (options) => dispatch(StateProvinceActions.stateProvinceAllRequest(options)),
+    getAllCities: (options) => dispatch(CityActions.cityAllRequest(options)),
   };
 };
 
