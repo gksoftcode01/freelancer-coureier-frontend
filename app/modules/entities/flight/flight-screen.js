@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{useContext} from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
@@ -27,21 +27,23 @@ import {
 import moment from 'moment/min/moment-with-locales';
 import { Ionicons } from '@expo/vector-icons';
 import StarRating from 'react-native-star-rating-widget';
-
-function FlightScreen(props) {
+import FilterModal from '../../../shared/components/filter/filter-model';
+ function FlightScreen(props) {
   const [page, setPage] = React.useState(0);
-  const [sort /*, setSort*/] = React.useState('id,asc');
+  const [sort /*, setSort*/] = React.useState('id,desc');
   const [size /*, setSize*/] = React.useState(20);
-
-  const { flight, flightList, getAllFlights, fetching } = props;
-
+  
+ 
+  const [filterVisible,setFilterVisible] = React.useState(false); 
+  const { flight, flightList, getAllFlights, fetching ,account ,filterentity,totalItems} = props;
+ 
   useFocusEffect(
     React.useCallback(() => {
       console.debug('Flight entity changed and the list screen is now in focus, refresh');
       setPage(0);
-      fetchFlights();
+    fetchFlights();
       /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [flight, fetchFlights]),
+    }, [flight,filterentity]),
   );
 
   const renderRow = ({ item }) => {
@@ -68,15 +70,26 @@ function FlightScreen(props) {
   const oneScreensWorth = 20;
 
   const fetchFlights = React.useCallback(() => {
-    getAllFlights({ page: page - 1, sort, size });
-  }, [getAllFlights, page, sort, size]);
+     console.log(filterentity);
+    getAllFlights({ page: page - 1, sort, size, fromCountry :filterentity?.fromCountry?.id ,
+      createBy :  account.id, 
+      toCountry : filterentity?.toCountry?.id , isMine : filterentity?.isMine ,isAskSent : filterentity?.isAskSent });
+      //  let filterentity2 = Object.assign({}, filterentity);
+      //  filterentity2.isChanged = false;
+      //  flightFilter(filterentity2);
+   }, [getAllFlights, page, sort, size,flightList,filterentity]);
+
+  // React.useEffect(() => {
+  //   setPage(0);
+  //    fetchFlights();
+  // }, [filterentity ]);
 
   const handleLoadMore = () => {
     if (page < props.links.next || props.links.next === undefined || fetching) {
       return;
     }
     setPage(page + 1);
-    fetchFlights();
+   fetchFlights();
   };
   return (
     <View style={styles.container} testID="flightScreen">
@@ -89,15 +102,17 @@ function FlightScreen(props) {
         onEndReached={handleLoadMore}
         ListEmptyComponent={renderEmpty}
       /> */}
+      {totalItems>0?(
       <FlatList
         data={flightList}
         keyExtractor={(item) => item.id}
         initialNumToRender={oneScreensWorth}
         onEndReached={handleLoadMore}
         ListEmptyComponent={renderEmpty}
+        key={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })}>
-            <Card key={item.id}>
+            <Card  >
               <UserInfo>
                 <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })}>
                   <UserImg source={item.toUserImg ? item.toUserImg : require('../../../../assets/avatar3.jpg')} />
@@ -145,6 +160,7 @@ function FlightScreen(props) {
           </TouchableOpacity>
         )}
       />
+      ):( <AlertMessage title="No Flights Found" />)}
     </View>
   );
 }
@@ -157,13 +173,17 @@ const mapStateToProps = (state) => {
     fetching: state.flights.fetchingAll,
     error: state.flights.errorAll,
     links: state.flights.links,
+    account: state.account.account,
+    filterentity: state.flights.filterentity,
+    totalItems: state.flights.totalItems,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllFlights: (options) => dispatch(FlightActions.flightAllRequest(options)),
-  };
+    flightFilter:(filterentity)=> dispatch(FlightActions.flightFilter(filterentity)),
+   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FlightScreen);

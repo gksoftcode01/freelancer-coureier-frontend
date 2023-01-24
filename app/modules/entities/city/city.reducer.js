@@ -86,13 +86,10 @@ export const success = (state, action) => {
 // successful api lookup for all entities
 export const allSuccess = (state, action) => {
   const { cityList, headers } = action;
-  const links = parseHeaderForLinks(headers.link);
-  return state.merge({
+   return state.merge({
     fetchingAll: false,
     errorAll: null,
-    links,
-    totalItems: parseInt(headers['x-total-count'], 10),
-    cityList: loadMoreDataWhenScrolled(state.cityList, cityList, links),
+      cityList 
   });
 };
 // successful api update

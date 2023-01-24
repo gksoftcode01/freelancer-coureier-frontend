@@ -10,7 +10,8 @@ const { Types, Creators } = createActions({
   flightAllRequest: ['options'],
   flightUpdateRequest: ['flight'],
   flightDeleteRequest: ['flightId'],
-
+  flightFilter : ['filterentity'],
+  getFlightFilter :[],
   flightSuccess: ['flight'],
   flightAllSuccess: ['flightList', 'headers'],
   flightUpdateSuccess: ['flight'],
@@ -43,10 +44,26 @@ export const INITIAL_STATE = Immutable({
   errorDeleting: null,
   links: { next: 0 },
   totalItems: 0,
+  filterentity : {
+    fromCountry: { id : 231 } ,
+    toCountry:  null,
+    isMine : false,
+    isAskSent :false,
+    isChanged:false
+  },
 });
 
 /* ------------- Reducers ------------- */
-
+// request the data from an api
+export const setFilter = (state,action) =>{ 
+  const { filterentity } = action;
+ return  state.merge({ 
+    filterentity,
+  });
+}
+export const getFilter = (state) =>{ 
+  return  state;
+}
 // request the data from an api
 export const request = (state) =>
   state.merge({
@@ -161,7 +178,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.FLIGHT_ALL_REQUEST]: allRequest,
   [Types.FLIGHT_UPDATE_REQUEST]: updateRequest,
   [Types.FLIGHT_DELETE_REQUEST]: deleteRequest,
-
+  [Types.FLIGHT_FILTER]: setFilter,
+  [Types.GET_FLIGHT_FILTER]: getFilter,
   [Types.FLIGHT_SUCCESS]: success,
   [Types.FLIGHT_ALL_SUCCESS]: allSuccess,
   [Types.FLIGHT_UPDATE_SUCCESS]: updateSuccess,

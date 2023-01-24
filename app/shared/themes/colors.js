@@ -13,7 +13,7 @@ myBlue : '#92b2fd',
 
 myLightPurple : '#ccd0f6',
 myLightOrange : '#f594b7',
-myPurple : '#ad7ffb',
+myPurple : '#755BB4',
 
 };
 

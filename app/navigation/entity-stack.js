@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React, { createContext ,useState}  from 'react';
 import { createStackNavigator, HeaderBackButton } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { DrawerButton } from './drawer/drawer-button';
 import { navigate, goBackOrIfParamsOrDefault } from './nav-ref';
@@ -44,8 +45,13 @@ import AskScreen from '../modules/entities/ask/ask-screen';
 import AskDetailScreen from '../modules/entities/ask/ask-detail-screen';
 import AskEditScreen from '../modules/entities/ask/ask-edit-screen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-// jhipster-react-native-navigation-import-needle
+import colors from '../shared/themes/colors';
+import {
+headerBtns
+} from '../shared/themes/FeedStyles';
+import flightFilterScreen from '../modules/entities/flight/flight-filter-screen';
+import CargoFilterScreen from '../modules/entities/cargo-request/cargo-filter-screen'
+  // jhipster-react-native-navigation-import-needle
 
 export const cargoScreens = [
   
@@ -55,22 +61,50 @@ export const cargoScreens = [
     name: 'CargoRequest',
     route: 'cargo-request',
     component: CargoRequestScreen,
-    options: {
-      title: 'CargoRequests',
-       headerRight: () => (
+    options: {   
+      title: 'Courier requests',
+
+      labelStyle : {color : colors.myPurple},
+      //headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
+      headerRight: () => (
+        <View style={{display:'flex',flexDirection:'row-reverse'}}>
         <HeaderBackButton
-          label=" New "
+                   label=" New "
+                   labelVisible="true"
+                   labelStyle={{color:colors.white}}
+                   style={{borderColor:colors.myPurple,borderWidth:2,borderRadius:10,backgroundColor:colors.myPurple,padding:5}}
           onPress={() => navigate('CargoRequestEdit', { id: undefined })}
-          backImage={(props) => <Ionicons name="md-add-circle-outline" size={32} color={props.tintColor} />}
+          backImage={(props) => <Ionicons name="md-add-circle-outline" size={24} color={colors.white} />}
         />
+        <HeaderBackButton
+        label="Filter"
+        labelVisible="true"
+
+        labelStyle={{color:colors.white}}
+        style={{borderColor:colors.myPurple,borderWidth:2,borderRadius:10,backgroundColor:colors.myPurple,padding:5}}
+         onPress={ () => navigate('CargoFilter')}
+        backImage={(props) => <Ionicons name="filter-outline" size={24} color={colors.white} />}
+      />
+      </View>
       ),
     },
+
+    
+  },
+  {
+
+    name: 'CargoFilter',
+    route: 'cargo-request/filter',
+    component: CargoFilterScreen,
+    options: { title: 'Filter couriers request',  labelStyle : {color : colors.myPurple},
+     headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('CargoRequest')} /> },
   },
   {
     name: 'CargoRequestDetail',
     route: 'cargo-request/detail',
     component: CargoRequestDetailScreen,
-    options: { title: 'View CargoRequest', headerLeft: () => <HeaderBackButton onPress={() => navigate('CargoRequest')} /> },
+    options: { title: 'View courier request', headerLeft: () => 
+    <HeaderBackButton color={colors.myPurple} onPress={() => navigate('CargoRequest')} /> },
   },
   {
     name: 'CargoRequestEdit',
@@ -78,7 +112,7 @@ export const cargoScreens = [
     component: CargoRequestEditScreen,
     options: {
       title: 'Edit CargoRequest',
-      headerLeft: () => <HeaderBackButton onPress={() => goBackOrIfParamsOrDefault('CargoRequestDetail', 'CargoRequest')} />,
+      headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => goBackOrIfParamsOrDefault('CargoRequestDetail', 'CargoRequest')} />,
     },
   },
   {
@@ -87,7 +121,7 @@ export const cargoScreens = [
     component: CargoRequestDetailsScreen,
     options: {
       title: 'CargoRequestDetails',
-      headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
+      headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('Entities')} />,
       headerRight: () => (
         <HeaderBackButton
           label=" New "
@@ -109,7 +143,7 @@ export const cargoScreens = [
     component: CargoRequestDetailsEditScreen,
     options: {
       title: 'Edit CargoRequestDetails',
-      headerLeft: () => <HeaderBackButton onPress={() => goBackOrIfParamsOrDefault('CargoRequestDetailsDetail', 'CargoRequestDetails')} />,
+      headerLeft: () => <HeaderBackButton color={colors.myPurple}  onPress={() => goBackOrIfParamsOrDefault('CargoRequestDetailsDetail', 'CargoRequestDetails')} />,
     },
   },
   {
@@ -118,7 +152,7 @@ export const cargoScreens = [
     component: BidScreen,
     options: {
       title: 'Bids',
-      headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
+      headerLeft: () => <HeaderBackButton color={colors.myPurple}  onPress={() => navigate('Entities')} />,
       headerRight: () => (
         <HeaderBackButton
           label=" New "
@@ -132,7 +166,7 @@ export const cargoScreens = [
     name: 'BidDetail',
     route: 'bid/detail',
     component: BidDetailScreen,
-    options: { title: 'View Bid', headerLeft: () => <HeaderBackButton onPress={() => navigate('Bid')} /> },
+    options: { title: 'View Bid',  headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('Bid')} /> },
   },
   {
     name: 'BidEdit',
@@ -150,23 +184,46 @@ export const flightScreens = [
     name: 'Flight',
     route: 'flight',
     component: FlightScreen,
-    options: {
-      title: 'Flights',
+    options: {   
+      title: 'Flights', 
+      labelStyle : {color : colors.myPurple},
       //headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,
       headerRight: () => (
+        <View style={{display:'flex',flexDirection:'row-reverse'}}>
         <HeaderBackButton
-          label=" New "
+                   label=" New "
+                   labelVisible="true"
+                   labelStyle={{color:colors.white}}
+                   style={{borderColor:colors.myPurple,borderWidth:2,borderRadius:10,backgroundColor:colors.myPurple,padding:5}}
           onPress={() => navigate('FlightEdit', { id: undefined })}
-          backImage={(props) => <Ionicons name="md-add-circle-outline" size={32} color={props.tintColor} />}
+          backImage={(props) => <Ionicons name="md-add-circle-outline" size={24} color={colors.white} />}
         />
+        <HeaderBackButton
+        label="Filter"
+        labelVisible="true"
+
+        labelStyle={{color:colors.white}}
+        style={{borderColor:colors.myPurple,borderWidth:2,borderRadius:10,backgroundColor:colors.myPurple,padding:5}}
+         onPress={ () => navigate('FlightFilter')}
+        backImage={(props) => <Ionicons name="filter-outline" size={24} color={colors.white} />}
+      />
+      </View>
       ),
     },
+  },
+  {
+
+    name: 'FlightFilter',
+    route: 'flight/filter',
+    component: flightFilterScreen,
+    options: { title: 'Filter Flight',  labelStyle : {color : colors.myPurple},
+     headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('Flight')} /> },
   },
   {
     name: 'FlightDetail',
     route: 'flight/detail',
     component: FlightDetailScreen,
-    options: { title: 'View Flight', headerLeft: () => <HeaderBackButton onPress={() => navigate('Flight')} /> },
+    options: { title: 'View Flight',  labelStyle : {color : colors.myPurple}, headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('Flight')} /> },
   },
   {
     name: 'FlightEdit',
@@ -174,7 +231,8 @@ export const flightScreens = [
     component: FlightEditScreen,
     options: {
       title: 'Edit Flight',
-      headerLeft: () => <HeaderBackButton onPress={() => goBackOrIfParamsOrDefault('FlightDetail', 'Flight')} />,
+      labelStyle : {color : colors.myPurple},
+      headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => goBackOrIfParamsOrDefault('FlightDetail', 'Flight')} />,
     },
   },
   {
@@ -209,7 +267,7 @@ export const flightScreens = [
     name: 'AppUserDetail',
     route: 'AppUser/detail',
     component: AppUserDetailScreen,
-    options: { title: 'User Details', headerLeft: () => <HeaderBackButton onPress={() => navigate('Flight')} /> },
+    options: { title: 'User Details', headerLeft: () => <HeaderBackButton  color={colors.myPurple} onPress={() => navigate('Flight')} /> },
   }
 ]
 
@@ -234,19 +292,22 @@ export const flightStack = ({navigation}) => (
     </EntityStack.Navigator>
 );
 
+
 export const cargoStack = ({navigation}) => (
+  
   <EntityStack.Navigator>
+
       {cargoScreens.map((screen, index) => {
         return <EntityStack.Screen name={screen.name} component={screen.component} key={index} options={screen.options} />;
       })}
-    </EntityStack.Navigator>
+     </EntityStack.Navigator>
 );
 
 export default function EntityStackScreen() {
   return (
     <Tab.Navigator
     screenOptions={{
-      activeTintColor: '#2e64e5',
+      activeTintColor: colors.myLightPurple,
     }}>
     
     <Tab.Screen

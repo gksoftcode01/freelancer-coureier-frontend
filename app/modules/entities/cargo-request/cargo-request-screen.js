@@ -31,10 +31,10 @@ import StarRating from 'react-native-star-rating-widget';
 
 function CargoRequestScreen(props) {
   const [page, setPage] = React.useState(0);
-  const [sort /*, setSort*/] = React.useState('id,asc');
+  const [sort /*, setSort*/] = React.useState('id,desc');
   const [size /*, setSize*/] = React.useState(20);
 
-  const { cargoRequest, cargoRequestList, getAllCargoRequests, fetching } = props;
+  const { cargoRequest, cargoRequestList, getAllCargoRequests, fetching , filterentity, totalItems,account  } = props;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -42,7 +42,7 @@ function CargoRequestScreen(props) {
       setPage(0);
       fetchCargoRequests();
       /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [cargoRequest, fetchCargoRequests]),
+    }, [cargoRequest, fetchCargoRequests ,filterentity]),
   );
 
   const renderRow = ({ item }) => {
@@ -59,7 +59,7 @@ function CargoRequestScreen(props) {
   // Render a header
 
   // Show this when data is empty
-  const renderEmpty = () => <AlertMessage title="No CargoRequests Found" show={!fetching} />;
+  const renderEmpty = () => <AlertMessage title="No CourierRequests Found" show={!fetching} />;
 
   const keyExtractor = (item, index) => `${index}`;
 
@@ -67,8 +67,11 @@ function CargoRequestScreen(props) {
   const oneScreensWorth = 20;
 
   const fetchCargoRequests = React.useCallback(() => {
-    getAllCargoRequests({ page: page - 1, sort, size });
-  }, [getAllCargoRequests, page, sort, size]);
+    console.log(filterentity);
+    getAllCargoRequests({ page: page - 1, sort, size  ,fromCountry :filterentity?.fromCountry?.id ,
+      createBy :  account.id, 
+      toCountry : filterentity?.toCountry?.id , isMine : filterentity?.isMine ,isBidSent : filterentity?.isBidSent });
+  }, [getAllCargoRequests, page, sort, size,filterentity]);
 
   const handleLoadMore = () => {
     if (page < props.links.next || props.links.next === undefined || fetching) {
@@ -88,6 +91,7 @@ function CargoRequestScreen(props) {
         onEndReached={handleLoadMore}
         ListEmptyComponent={renderEmpty}
       /> */}
+      {totalItems>0?(
        <FlatList
               data={cargoRequestList}
               keyExtractor={(item) => item.id}    
@@ -132,22 +136,24 @@ function CargoRequestScreen(props) {
                        
                  </PostText>
                  <PostText>
-                 <Text style={styles.label}>  {item.isToDoor?'To Door':'' } </Text>  
-                 {' '}
+                 
                  <Text   style={styles.label}>{Number(item.budget) > 0?` Budget : ${Number(item.budget)} AED` :''}</Text>
+                 {' '}
+                 <Text style={styles.pinkLabel}>  {item.isToDoor?'To Door only':'' } </Text>  
 
-             
-                  </PostText>
-                  
-                    {item.reqItemTypes?.length>0?(<PostText> 
-                         {item.reqItemTypes.map((entity, index) => (
-          <>
-          <Text style={styles.backgroundlabel} key={index} >
-            {String(entity.name || ' ')}   
-          </Text>
-          {' '}
-          </>
-        ))}    </PostText>):null}
+    </PostText>
+    {item.reqItemTypes?.length > 0 ? (
+                <View style={styles.flexRow}>
+                  {item.reqItemTypes.map((entity, index) => (
+                    <> 
+                      <Text style={styles.backgroundlabel} key={index}>
+                     {String(entity.name || ' ')}
+                      </Text>{' '}
+                    </>
+                  ))}{' '}
+                </View>
+              ) : null}
+
                             <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
 
                         </Card>
@@ -155,6 +161,7 @@ function CargoRequestScreen(props) {
             
               )}
             />
+      ):(<AlertMessage title="No Courier Requests Found"  />)}
     </View>
   );
 }
@@ -167,6 +174,10 @@ const mapStateToProps = (state) => {
     fetching: state.cargoRequests.fetchingAll,
     error: state.cargoRequests.errorAll,
     links: state.cargoRequests.links,
+    filterentity: state.cargoRequests.filterentity,
+    totalItems: state.cargoRequests.totalItems,
+    account: state.account.account,
+
   };
 };
 

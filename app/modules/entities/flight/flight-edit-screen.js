@@ -1,6 +1,7 @@
 import React, { createRef } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { connect } from 'react-redux';
+import { useFormikContext } from 'formik';
 
 import FlightActions from './flight.reducer';
 import AppUserActions from '../app-user/app-user.reducer';
@@ -14,6 +15,7 @@ import FormField from '../../../shared/components/form/jhi-form-field';
 import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import styles from './flight-styles';
+import { values } from 'lodash';
 
 const FlightStatus = [
   {
@@ -42,8 +44,6 @@ function FlightEditScreen(props) {
     updateSuccess,
     navigation,
     reset,
-    getAllAppUsers,
-    appUserList,
     getAllCountries,
     countryList,
     getAllStateProvinces,
@@ -52,10 +52,17 @@ function FlightEditScreen(props) {
     cityList,
     getAllItemTypes,
     itemTypesList,
+    account,
   } = props;
 
   const [formValue, setFormValue] = React.useState();
   const [error, setError] = React.useState('');
+  const [stateProvinceListFrom, setStateProvinceListFrom] = React.useState([]);
+  const [stateProvinceListTo, setStateProvinceListTo] = React.useState([]);
+
+  const [cityListFrom, setCityListFrom] = React.useState([]);
+  const [cityListTo, setCityListTo] = React.useState([]);
+
 
   const isNewEntity = !(route.params && route.params.entityId);
 
@@ -77,13 +84,51 @@ function FlightEditScreen(props) {
 
   // fetch related entities
   React.useEffect(() => {
-    getAllAppUsers();
-    getAllCountries();
-    getAllStateProvinces();
-    getAllCities();
+    if (countryList.length == 0) getAllCountries();
     getAllItemTypes();
-  }, [getAllAppUsers, getAllCountries, getAllStateProvinces, getAllCities, getAllItemTypes]);
+    // getStateProvinces(231);
+    // getStateProvincesTo(65);
+    // getCities(3391);
+    // getCitiesTo(3223);
+  }, [getAllCountries, getAllItemTypes]);
 
+  const getStateProvinces = (value) => {
+    if (value && value > 0) {
+      getAllStateProvinces({ countryId: value });
+      setTimeout(() => {
+        setStateProvinceListFrom(stateProvinceList);
+      }, 1000);
+    }
+  };
+  const getStateProvincesTo = (value) => {
+    if (value && value > 0) {
+      getAllStateProvinces({ countryId: value });
+      setTimeout(() => {
+        setStateProvinceListTo(stateProvinceList);
+      }, 1000);
+    }
+  };
+  const getCities = (value) => {
+    if (value && value > 0) {
+      getAllCities({ stateId: value });
+      setTimeout(() => {
+        setCityListFrom(cityList);
+      }, 1000);
+    }
+  };
+  const getCitiesTo = (value) => {
+    if (value && value > 0) {
+      getAllCities({ stateId: value });
+      setTimeout(() => {
+        setCityListTo(cityList);
+      }, 1000);
+    }
+  };
+  const fhandleChange = ({ e }) => {
+    console.log(e);
+    if (e.target.name == 'fromCountry') getStateProvinces(e.target.value);
+    else getStateProvincesTo(e.target.value);
+  };
   useDidUpdateEffect(() => {
     if (updating === false) {
       if (errorUpdating) {
@@ -121,7 +166,7 @@ function FlightEditScreen(props) {
   const fromCityRef = createRef();
   const toCityRef = createRef();
   const availableItemTypesRef = createRef();
-
+ 
   return (
     <View style={styles.container}>
       <KeyboardAwareScrollView
@@ -197,9 +242,8 @@ function FlightEditScreen(props) {
               testID="statusInput"
               inputType="select-one"
               listItems={FlightStatus}
-            
             />
-       
+
             <FormField
               name="fromCountry"
               inputType="select-one"
@@ -226,7 +270,7 @@ function FlightEditScreen(props) {
               name="fromState"
               inputType="select-one"
               ref={fromStateRef}
-              listItems={stateProvinceList}
+              listItems={stateProvinceListFrom}
               listItemLabelField="name"
               label="From State"
               placeholder="Select From State"
@@ -236,7 +280,7 @@ function FlightEditScreen(props) {
               name="toState"
               inputType="select-one"
               ref={toStateRef}
-              listItems={stateProvinceList}
+              listItems={stateProvinceListTo}
               listItemLabelField="name"
               label="To State"
               placeholder="Select To State"
@@ -246,7 +290,7 @@ function FlightEditScreen(props) {
               name="fromCity"
               inputType="select-one"
               ref={fromCityRef}
-              listItems={cityList}
+              listItems={cityListFrom}
               listItemLabelField="name"
               label="From City"
               placeholder="Select From City"
@@ -256,7 +300,7 @@ function FlightEditScreen(props) {
               name="toCity"
               inputType="select-one"
               ref={toCityRef}
-              listItems={cityList}
+              listItems={cityListTo}
               listItemLabelField="name"
               label="To City"
               placeholder="Select To City"
@@ -283,6 +327,7 @@ function FlightEditScreen(props) {
 
 // convenience methods for customizing the mapping of the entity to/from the form value
 const entityToFormValue = (value) => {
+  console.log(value);
   if (!value) {
     return {};
   }
@@ -316,7 +361,7 @@ const formValueToEntity = (value) => {
     toDoorAvailable: value.toDoorAvailable === null ? false : Boolean(value.toDoorAvailable),
     status: value.status ?? null,
   };
-  entity.createBy = flight.createBy ?flight.createBy: null;
+  entity.createBy = account.id;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
   entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
   entity.fromState = value.fromState ? { id: value.fromState } : null;
@@ -329,9 +374,9 @@ const formValueToEntity = (value) => {
 
 const mapStateToProps = (state) => {
   return {
-    appUserList: state.appUsers.appUserList ?? [],
     countryList: state.countries.countryList ?? [],
     stateProvinceList: state.stateProvinces.stateProvinceList ?? [],
+    stateProvinceListTo: state.stateProvinces.stateProvinceListTo ?? [],
     cityList: state.cities.cityList ?? [],
     itemTypesList: state.itemTypes.itemTypesList ?? [],
     flight: state.flights.flight,
@@ -339,14 +384,15 @@ const mapStateToProps = (state) => {
     updating: state.flights.updating,
     updateSuccess: state.flights.updateSuccess,
     errorUpdating: state.flights.errorUpdating,
+    account: state.account.account,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAllAppUsers: (options) => dispatch(AppUserActions.appUserAllRequest(options)),
     getAllCountries: (options) => dispatch(CountryActions.countryAllRequest(options)),
     getAllStateProvinces: (options) => dispatch(StateProvinceActions.stateProvinceAllRequest(options)),
+
     getAllCities: (options) => dispatch(CityActions.cityAllRequest(options)),
     getAllItemTypes: (options) => dispatch(ItemTypesActions.itemTypesAllRequest(options)),
     getFlight: (id) => dispatch(FlightActions.flightRequest(id)),

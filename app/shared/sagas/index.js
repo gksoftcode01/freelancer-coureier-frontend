@@ -69,7 +69,7 @@ export default function* root() {
 
     takeLatest(StateProvinceTypes.STATE_PROVINCE_REQUEST, StateProvinceSagas.getStateProvince, api),
     takeLatest(StateProvinceTypes.STATE_PROVINCE_ALL_REQUEST, StateProvinceSagas.getAllStateProvinces, api),
-    takeLatest(StateProvinceTypes.STATE_PROVINCE_UPDATE_REQUEST, StateProvinceSagas.updateStateProvince, api),
+     takeLatest(StateProvinceTypes.STATE_PROVINCE_UPDATE_REQUEST, StateProvinceSagas.updateStateProvince, api),
     takeLatest(StateProvinceTypes.STATE_PROVINCE_DELETE_REQUEST, StateProvinceSagas.deleteStateProvince, api),
 
     takeLatest(CountryTypes.COUNTRY_REQUEST, CountrySagas.getCountry, api),

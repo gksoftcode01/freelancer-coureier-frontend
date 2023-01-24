@@ -15,6 +15,7 @@ import FormField from '../../../shared/components/form/jhi-form-field';
 import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import styles from './cargo-request-styles';
+import { Formik, Field, ErrorMessage,  useFormikContext } from "formik";
 
 function CargoRequestEditScreen(props) {
   const {
@@ -67,6 +68,7 @@ function CargoRequestEditScreen(props) {
   React.useEffect(() => {
     getAllCargoRequestStatuses();
     getAllAppUsers();
+    if(countryList.length == 0)
     getAllCountries();
     getAllStateProvinces();
     getAllCities();
@@ -111,6 +113,61 @@ function CargoRequestEditScreen(props) {
   const fromCityRef = createRef();
   const toCityRef = createRef();
   const reqItemTypesRef = createRef();
+ 
+const [fromCountry, setfromCountry] = React.useState(0);
+const [toCountry, setToCountry] = React.useState(0);
+const [stateListFrom, setStateListFrom] = React.useState([]);
+const [stateListTo, setStateListTo] = React.useState([]);
+const [isFrom, setisFrom] = React.useState(-1);
+React.useEffect(() => {
+  if(isFrom==1){
+       setStateListFrom(stateProvinceList);
+       setisFrom(-1);
+  }
+  if(isFrom==0){
+    setStateListTo(stateProvinceList);
+    setisFrom(-1);
+}
+}, [stateProvinceList]);
+
+
+React.useEffect(() => {
+  console.log("from country", fromCountry ); 
+  getAllStateProvinces({countryId : fromCountry});
+  setisFrom(1);
+}, [
+  fromCountry
+]);
+
+React.useEffect(() => {
+  console.log("to country", toCountry ); 
+  getAllStateProvinces({countryId : toCountry});
+  setisFrom(0);
+}, [
+  toCountry
+]);
+
+
+
+const Logger = () => {
+  const formik = useFormikContext();
+  React.useEffect(() => {
+      setfromCountry(formik.values.fromCountry);
+      
+   }, [
+    formik.values.fromCountry 
+   ]);
+
+   React.useEffect(() => {
+    setToCountry(formik.values.toCountry);
+    
+ }, [
+  formik.values.toCountry 
+ ]);
+
+
+  return null;
+};
 
   return (
     <View style={styles.container}>
@@ -122,7 +179,9 @@ function CargoRequestEditScreen(props) {
         contentContainerStyle={styles.paddedScrollView}>
         {!!error && <Text style={styles.errorText}>{error}</Text>}
         {formValue && (
-          <Form initialValues={formValue} onSubmit={onSubmit} ref={formRef}>
+          <Form initialValues={formValue} onSubmit={onSubmit} ref={formRef}   
+          >
+            <Logger />
             <FormField
               name="budget"
               ref={budgetRef}
@@ -198,6 +257,7 @@ function CargoRequestEditScreen(props) {
               label="From Country"
               placeholder="Select From Country"
               testID="countrySelectInput"
+ 
             />
             <FormField
               name="toCountry"
@@ -213,7 +273,7 @@ function CargoRequestEditScreen(props) {
               name="fromState"
               inputType="select-one"
               ref={fromStateRef}
-              listItems={stateProvinceList}
+              listItems={stateListFrom}
               listItemLabelField="name"
               label="From State"
               placeholder="Select From State"
@@ -223,7 +283,7 @@ function CargoRequestEditScreen(props) {
               name="toState"
               inputType="select-one"
               ref={toStateRef}
-              listItems={stateProvinceList}
+              listItems={stateListTo}
               listItemLabelField="name"
               label="To State"
               placeholder="Select To State"

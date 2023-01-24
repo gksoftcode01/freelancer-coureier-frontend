@@ -79,7 +79,7 @@ export default StyleSheet.create({
   authText: {
     textAlign: 'center',
     fontSize: 18,
-    color: Colors.jhipsterBlue,
+    color: Colors.myPurple,
     fontWeight: '600',
   },
 });

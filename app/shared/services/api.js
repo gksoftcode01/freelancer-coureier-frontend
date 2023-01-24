@@ -53,7 +53,7 @@ const create = (baseURL = AppConfig.apiUrl) => {
       { currentPassword, newPassword },
       { headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/plain, */*' } },
     );
-
+ 
   const getUser = (userId) => api.get('api/users/' + userId);
   const getAllUsers = (options) => api.get('api/users', options);
   const createUser = (user) => api.post('api/users', user);

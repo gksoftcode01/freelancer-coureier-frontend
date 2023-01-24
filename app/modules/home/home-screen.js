@@ -9,6 +9,24 @@ import styles from './home-screen.styles';
 import RoundedButton from '../../shared/components/rounded-button/rounded-button';
 import { login, logout, loginLoad } from '../../modules/login/login.sagas';
 import LoginActions from '../../modules/login/login.reducer';
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImg,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType,
+} from '../../shared/themes/FeedStyles';
+import colors from '../../shared/themes/colors.js';
 
 function HomeScreen(props) {
   const { navigation , account } = props;
@@ -16,15 +34,14 @@ function HomeScreen(props) {
   return (
     <View style={[styles.container, styles.mainContainer]} testID="homeScreen">
       <ScrollView contentInsetAdjustmentBehavior="automatic" style={styles.scrollView}>
+        <Card> 
         <View style={styles.centered}>
           <Image source={Images.logoJhipster} style={styles.logo} />
-          <Text style={styles.welcomeText}>TheCourier</Text>
-          <Text style={styles.welcomeText}>Welcome to your JHipster React Native app.</Text>
-        </View>
+         </View>
         {account && account.login ? (
           <View style={[styles.authContainer, styles.authContainerTrue]} testID="authDisplayTrue">
             <Text style={styles.authText}>
-              <Ionicons name="md-checkmark-circle" size={22} color={'white'} /> You are signed in as {account.login}
+              <Ionicons name="md-checkmark-circle" size={22} color={colors.myPurple} /> You are signed in as {account.login}
             </Text>
             <RoundedButton text="Settings" onPress={() => navigation.navigate('Settings')}   />
             <RoundedButton text="Change password" onPress={() => navigation.navigate('Change Password')}   />
@@ -60,6 +77,7 @@ function HomeScreen(props) {
         
       
         </View>
+        </Card>
       </ScrollView>
     </View>
   );

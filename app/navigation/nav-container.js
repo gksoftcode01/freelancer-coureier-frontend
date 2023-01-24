@@ -1,4 +1,4 @@
-import * as React from 'react';
+import    React , { createContext }  from 'react';
 import { AppState, Text, useWindowDimensions, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import * as SplashScreen from 'expo-splash-screen';
@@ -25,7 +25,7 @@ import ChatScreen from '../modules/chat/chat-screen';
 import DrawerContent from './drawer/drawer-content';
 import { isReadyRef, navigationRef } from './nav-ref';
 import NotFound from './not-found-screen';
-import { ModalScreen } from './modal-screen';
+import { FilterScreen } from './FilterScreen';
 import { DrawerButton } from './drawer/drawer-button';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -40,7 +40,7 @@ const linking = {
       Home: 'Home/*',
       Flights: 'Flights/*',
       Cargo :'Cargo/*',
-      ModalScreen: 'alert',
+      FilterScreen: 'alert',
       NotFound: '*',
     },
   },
@@ -49,6 +49,9 @@ const linking = {
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
+ 
+
+
 const getTabBarVisibility = (route) => {
   const routeName = route.state
     ? route.state.routes[route.state.index].name
@@ -59,21 +62,23 @@ const getTabBarVisibility = (route) => {
   }
   return true;
 };
-// const getScreens = (props) => {
-//   const isAuthed = props.account !== null;
-//   return drawerScreens.map((screen, index) => {
-//     if (screen.auth === null || screen.auth === undefined) {
-//       return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
-//     } else if (screen.auth === isAuthed) {
-//       return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
-//     }
-//     return null;
-//   });
-// };
+const getScreens = (props) => {
+  const isAuthed = props.account !== null;
+  return drawerScreens.map((screen, index) => {
+    if (screen.auth === null || screen.auth === undefined) {
+      return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
+    } else if (screen.auth === isAuthed) {
+      return <Drawer.Screen name={screen.name} component={screen.component} options={screen.options} key={index} />;
+    }
+    return null;
+  });
+};
 
 function NavContainer(props) {
   const { loaded, getAccount } = props;
   const lastAppState = 'active';
+ 
+  
 
   React.useEffect(() => {
     return () => {
@@ -108,20 +113,22 @@ function NavContainer(props) {
       <Text>Loading...</Text>
     </View>
   ) : (
+
     <NavigationContainer /*theme={scheme === 'dark' ? DarkTheme : DefaultTheme}*/
        ref={navigationRef}
      
       onReady={() => {
         isReadyRef.current = true;
       }}>
+
          <Tab.Navigator
            initialRouteName="Home"
            firstRoute ="Home"
            
     screenOptions={{
-      activeTintColor: '#2e64e5',
+      activeTintColor: colors.myPurple,
           }}>
-    
+
     <Tab.Screen
       name="Flights"
       component={flightStack}
@@ -160,9 +167,10 @@ function NavContainer(props) {
         ),
       }}
     />
-    <Tab.Screen
-          name="ModalScreen"
-          component={ModalScreen}
+    {/* <Tab.Screen
+          name="FilterScreen"
+          component={FilterScreen}
+          title="modal"
           options={{
             tabBarIcon:({color, size}) => (<></>),
             tabBarButton: () => null,
@@ -186,7 +194,7 @@ function NavContainer(props) {
               },
             }),
           }}
-        />
+        /> */}
       <Tab.Screen name="NotFound" component={NotFound} options={{    tabBarButton: () => null,title: 'Oops!' }} />
 
   </Tab.Navigator>
@@ -233,7 +241,7 @@ function NavContainer(props) {
       */}
     
     </NavigationContainer>
-  ) ;
+    ) ;
   
 }
 

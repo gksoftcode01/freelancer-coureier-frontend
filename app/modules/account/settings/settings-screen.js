@@ -10,6 +10,10 @@ import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import FormButton from '../../../shared/components/form/jhi-form-button';
 import FormField from '../../../shared/components/form/jhi-form-field';
 import Form from '../../../shared/components/form/jhi-form';
+import CountryActions from '../../entities/country/country.reducer'
+import StateProvinceActions from '../../entities/state-province/state-province.reducer'
+import CityActions from '../../entities/city/city.reducer'
+
 
 function SettingsScreen(props) {
 
@@ -33,6 +37,7 @@ function SettingsScreen(props) {
     stateProvinceList,
     getAllCities,
     cityList,
+    account
   } = props;
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
@@ -41,6 +46,7 @@ function SettingsScreen(props) {
   const validationSchema = Yup.object().shape({
     email: Yup.string().required().email().label('Email'),
   });
+  const [formValue, setFormValue] = React.useState();
 
   const onSubmit = (data) => {
     setSuccess('');
@@ -77,7 +83,11 @@ function SettingsScreen(props) {
    const countryRef = createRef();
   const stateProvinceRef = createRef();
   const cityRef = createRef();
-
+  React.useEffect(() => {
+  
+      setFormValue(entityToFormValue(account));
+  
+  }, [account ]);
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
@@ -123,7 +133,7 @@ function SettingsScreen(props) {
               placeholder="Enter Birth Date"
               testID="birthDateInput"
               inputType="datetime"
-            /> */}
+            />   
             <FormField
               name="gender"
               ref={genderRef}
@@ -161,7 +171,7 @@ function SettingsScreen(props) {
               testID="mobileNumberInput"
               inputType="text"
               autoCapitalize="none"
-            />
+            /> 
                 <FormField
               name="country"
               inputType="select-one"
@@ -192,7 +202,7 @@ function SettingsScreen(props) {
               placeholder="Select City"
               testID="citySelectInput"
             />
-
+*/}
         <FormButton testID="settingsSubmitButton" title={'Save'} />
       </Form>
     </KeyboardAwareScrollView>
@@ -216,6 +226,7 @@ const entityToFormValue = (value) => {
   };
 };
 const formValueToEntity = (value) => {
+  console.log(account);
   const entity = {
     id: value.id ?? null,
     firstName : value.firstName ??null,
@@ -230,6 +241,8 @@ const formValueToEntity = (value) => {
    entity.country = value.country ? { id: value.country } : null;
   entity.stateProvince = value.stateProvince ? { id: value.stateProvince } : null;
   entity.city = value.city ? { id: value.city } : null;
+  entity.login = account.login;
+
   return entity;
 };
 const mapStateToProps = (state) => {
@@ -247,6 +260,7 @@ const mapDispatchToProps = (dispatch) => {
     getAllCountries: (options) => dispatch(CountryActions.countryAllRequest(options)),
     getAllStateProvinces: (options) => dispatch(StateProvinceActions.stateProvinceAllRequest(options)),
     getAllCities: (options) => dispatch(CityActions.cityAllRequest(options)),
+    
   };
 };
 

@@ -315,7 +315,7 @@ function FlightDetailScreen(props) {
 
                         ):(
                           <TouchableHighlight
-                           onPress={ navigate('CargoRequestEdit', { id: undefined })}>
+                           onPress={ props.navigation.navigate('CargoRequestEdit', { id: undefined })}>
                           <Text style={styles.textStyle}>Please create Courier request</Text>
                         </TouchableHighlight>  
                         )}
