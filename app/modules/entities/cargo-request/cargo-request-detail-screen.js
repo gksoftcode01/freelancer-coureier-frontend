@@ -265,11 +265,11 @@ function CargoRequestDetailScreen(props) {
 
         <PostText>
           <Text style={styles.label}>Budget: </Text>
-          <Text testID="budget">{cargoRequest.budget}</Text>
+          <Text testID="budget">{cargoRequest.budget} (AED) </Text>
         </PostText>
         <PostText>
           <Text style={styles.label}>IsToDoor: </Text>
-          <Text testID="isToDoor">{String(cargoRequest.isToDoor)}</Text>
+          <Text testID="isToDoor">{cargoRequest.isToDoor?"Yes":"No"}</Text>
         </PostText>
         <PostText>
           <Text style={styles.label}>CreateDate: </Text>
@@ -300,16 +300,28 @@ function CargoRequestDetailScreen(props) {
           <Text style={styles.label}>To City: </Text>
           <Text testID="toCity">{String(cargoRequest.toCity ? cargoRequest.toCity.name : '')}</Text>
         </PostText>
-
-        <PostText>
-          <Text style={styles.label}>Description : </Text>
-          <Text>{cargoRequest.packageDesc}</Text>
-        </PostText>
-
         <PostText>
           <Text style={styles.label}>weight : </Text>
-          <Text>{cargoRequest.weight}</Text>
+          <Text>{cargoRequest.weight} KG</Text>
         </PostText>
+        <PostText>
+          <Text style={styles.label}>height : </Text>
+          <Text>{cargoRequest.height} CM</Text>
+        </PostText>
+        <PostText>
+          <Text style={styles.label}>width : </Text>
+          <Text>{cargoRequest.width} CM</Text>
+        </PostText>
+        <PostText>
+          <Text style={styles.label}>length : </Text>
+          <Text>{cargoRequest.length} CM</Text>
+        </PostText>
+        <PostText>
+          <Text style={styles.label}>Description : </Text>
+          <Text>{cargoRequest.description}</Text>
+        </PostText>
+
+        
 
         <PostText>
           <Text style={styles.label}>Req Item Types: </Text>

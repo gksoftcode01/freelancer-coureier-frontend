@@ -8,11 +8,10 @@ function* getCargoRequest(api, action) {
   // make the call to the api
   const apiCall = call(api.getCargoRequest, cargoRequestId);
   const response = yield call(callApi, apiCall);
-
-  // success?
+   // success?
   if (response.ok) {
     response.data = mapDateFields(response.data);
-    yield put(CargoRequestActions.cargoRequestSuccess(response.data));
+     yield put(CargoRequestActions.cargoRequestSuccess(response.data));
   } else {
     yield put(CargoRequestActions.cargoRequestFailure(response.data));
   }
