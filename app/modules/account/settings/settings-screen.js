@@ -37,10 +37,15 @@ function SettingsScreen(props) {
     stateProvinceList,
     getAllCities,
     cityList,
-    account
+    account,
+    getAccount
   } = props;
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
+
+  // React.useEffect(() => {
+  //   getAccount();
+  // }, [getAccount]);
 
   // set up validation schema for the form
   const validationSchema = Yup.object().shape({
@@ -55,10 +60,10 @@ function SettingsScreen(props) {
   };
   React.useEffect(() => {
      getAllCountries();
-   // getAllStateProvinces();
-  //  getAllCities();
-  //, getAllStateProvinces, getAllCities
-  }, [  getAllCountries]);
+ 
+  }, [  getAllCountries,account]);
+
+
   useDidUpdateEffect(() => {
     if (!props.updating) {
       if (props.error) {
@@ -81,8 +86,7 @@ function SettingsScreen(props) {
   const phoneNumberRef = createRef();
   const mobileNumberRef = createRef();
    const countryRef = createRef();
-  const stateProvinceRef = createRef();
-  const cityRef = createRef();
+ 
   React.useEffect(() => {
   
       setFormValue(entityToFormValue(account));
@@ -96,7 +100,8 @@ function SettingsScreen(props) {
       keyboardDismissMode="on-drag">
       {!!error && <Text style={styles.errorText}>{error}</Text>}
       {!!success && <Text style={styles.successText}>{success}</Text>}
-      <Form initialValues={props.account} validationSchema={validationSchema} onSubmit={onSubmit} ref={formRef}>
+      {formValue && (
+         <Form initialValues={formValue} validationSchema={validationSchema} onSubmit={onSubmit} ref={formRef}>
         <FormField
           name="firstName"
           ref={firstNameRef}
@@ -126,7 +131,7 @@ function SettingsScreen(props) {
           keyboardType="email-address"
           textContentType="username"
         />
-         {/* <FormField
+         <FormField
               name="birthDate"
               ref={birthDateRef}
               label="Birth Date"
@@ -151,18 +156,9 @@ function SettingsScreen(props) {
               placeholder="Enter Register Date"
               testID="registerDateInput"
               inputType="datetime"
-              onSubmitEditing={() => phoneNumberRef.current?.focus()}
+              
             />
-            <FormField
-              name="phoneNumber"
-              ref={phoneNumberRef}
-              label="Phone Number"
-              placeholder="Enter Phone Number"
-              testID="phoneNumberInput"
-              inputType="text"
-              autoCapitalize="none"
-              onSubmitEditing={() => mobileNumberRef.current?.focus()}
-            />
+       
             <FormField
               name="mobileNumber"
               ref={mobileNumberRef}
@@ -182,29 +178,9 @@ function SettingsScreen(props) {
               placeholder="Select Country"
               testID="countrySelectInput"
             />
-            <FormField
-              name="stateProvince"
-              inputType="select-one"
-              ref={stateProvinceRef}
-              listItems={stateProvinceList}
-              listItemLabelField="name"
-              label="State Province"
-              placeholder="Select State Province"
-              testID="stateProvinceSelectInput"
-            />
-            <FormField
-              name="city"
-              inputType="select-one"
-              ref={cityRef}
-              listItems={cityList}
-              listItemLabelField="name"
-              label="City"
-              placeholder="Select City"
-              testID="citySelectInput"
-            />
-*/}
+        
         <FormButton testID="settingsSubmitButton" title={'Save'} />
-      </Form>
+      </Form>)}
     </KeyboardAwareScrollView>
   );
 }
@@ -214,16 +190,17 @@ const entityToFormValue = (value) => {
   }
   return {
     id: value.id ?? null,
+    firstName : value.firstName ??null,
+    lastName : value.lastName??null,  
+    email : value.email??null,
+
     birthDate: value.birthDate ?? null,
     gender: value.gender ?? null,
     registerDate: value.registerDate ?? null,
     phoneNumber: value.phoneNumber ?? null,
     mobileNumber: value.mobileNumber ?? null,
-    user: value.user && value.user.id ? value.user.id : null,
-    country: value.country && value.country.id ? value.country.id : null,
-    stateProvince: value.stateProvince && value.stateProvince.id ? value.stateProvince.id : null,
-    city: value.city && value.city.id ? value.city.id : null,
-  };
+     country: value.country && value.country.id ? value.country.id : null,
+   };
 };
 const formValueToEntity = (value) => {
   console.log(account);
@@ -239,8 +216,7 @@ const formValueToEntity = (value) => {
     mobileNumber: value.mobileNumber ?? null,
   };
    entity.country = value.country ? { id: value.country } : null;
-  entity.stateProvince = value.stateProvince ? { id: value.stateProvince } : null;
-  entity.city = value.city ? { id: value.city } : null;
+ 
   entity.login = account.login;
 
   return entity;

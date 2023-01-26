@@ -16,7 +16,7 @@ import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import styles from './flight-styles';
 import { values } from 'lodash';
-
+ 
 const FlightStatus = [
   {
     label: 'Available',
@@ -57,12 +57,6 @@ function FlightEditScreen(props) {
 
   const [formValue, setFormValue] = React.useState();
   const [error, setError] = React.useState('');
-  const [stateProvinceListFrom, setStateProvinceListFrom] = React.useState([]);
-  const [stateProvinceListTo, setStateProvinceListTo] = React.useState([]);
-
-  const [cityListFrom, setCityListFrom] = React.useState([]);
-  const [cityListTo, setCityListTo] = React.useState([]);
-
 
   const isNewEntity = !(route.params && route.params.entityId);
 
@@ -78,13 +72,28 @@ function FlightEditScreen(props) {
     if (isNewEntity) {
       setFormValue(entityToFormValue({}));
     } else if (!fetching) {
+
+      setisFrom(1);
+      getAllStateProvinces({countryId : flight.fromCountry.id});
+      if( flight.fromState)
+        getAllCities({stateId : flight.fromState.id});
+
+
+      setisFrom(0);
+      getAllStateProvinces({countryId : flight.toCountry.id});
+      if( flight.toState)
+        getAllCities({stateId : flight.toState.id});
+
+      setisFrom(-1);  
       setFormValue(entityToFormValue(flight));
+
     }
-  }, [flight, fetching, isNewEntity]);
+  }, [flight, fetching,getAllStateProvinces,getAllCities,  isNewEntity]);
 
   // fetch related entities
   React.useEffect(() => {
-    if (countryList.length == 0) getAllCountries();
+    if (countryList.length == 0)
+     getAllCountries();
     getAllItemTypes();
     // getStateProvinces(231);
     // getStateProvincesTo(65);
@@ -92,43 +101,7 @@ function FlightEditScreen(props) {
     // getCitiesTo(3223);
   }, [getAllCountries, getAllItemTypes]);
 
-  const getStateProvinces = (value) => {
-    if (value && value > 0) {
-      getAllStateProvinces({ countryId: value });
-      setTimeout(() => {
-        setStateProvinceListFrom(stateProvinceList);
-      }, 1000);
-    }
-  };
-  const getStateProvincesTo = (value) => {
-    if (value && value > 0) {
-      getAllStateProvinces({ countryId: value });
-      setTimeout(() => {
-        setStateProvinceListTo(stateProvinceList);
-      }, 1000);
-    }
-  };
-  const getCities = (value) => {
-    if (value && value > 0) {
-      getAllCities({ stateId: value });
-      setTimeout(() => {
-        setCityListFrom(cityList);
-      }, 1000);
-    }
-  };
-  const getCitiesTo = (value) => {
-    if (value && value > 0) {
-      getAllCities({ stateId: value });
-      setTimeout(() => {
-        setCityListTo(cityList);
-      }, 1000);
-    }
-  };
-  const fhandleChange = ({ e }) => {
-    console.log(e);
-    if (e.target.name == 'fromCountry') getStateProvinces(e.target.value);
-    else getStateProvincesTo(e.target.value);
-  };
+  
   useDidUpdateEffect(() => {
     if (updating === false) {
       if (errorUpdating) {
@@ -141,6 +114,131 @@ function FlightEditScreen(props) {
   }, [updateSuccess, errorUpdating, navigation]);
 
   const onSubmit = (data) => updateFlight(formValueToEntity(data));
+
+  const [fromCountry, setfromCountry] = React.useState(0);
+  const [toCountry, setToCountry] = React.useState(0);
+  
+  
+  const [fromState, setFromState] = React.useState(0);
+  const [toState, setToState] = React.useState(0);
+  
+  const [isFrom, setisFrom] = React.useState(-1);
+  
+  const [stateProvinceListFrom, setStateProvinceListFrom] = React.useState([]);
+  const [stateProvinceListTo, setStateProvinceListTo] = React.useState([]);
+
+  const [cityListFrom, setCityListFrom] = React.useState([]);
+  const [cityListTo, setCityListTo] = React.useState([]);
+
+
+  React.useEffect(() => {
+    console.log("here");
+    if(isFrom==1){
+         setStateProvinceListFrom(stateProvinceList);
+         setisFrom(-1);
+    }
+    if(isFrom==0){
+      setStateProvinceListTo(stateProvinceList);
+      setisFrom(-1);
+  }
+  }, [stateProvinceList]);
+  React.useEffect(() => {
+    console.log("here");
+    if(fromCountry>0){
+    console.log("from country", fromCountry ); 
+    getAllStateProvinces({countryId : fromCountry});
+    setisFrom(1);
+    }
+  }, [
+    fromCountry
+  ]);
+  React.useEffect(() => {
+    console.log("here");
+    if(toCountry>0){
+    console.log("to country", toCountry ); 
+    getAllStateProvinces({countryId : toCountry});
+    setisFrom(0);
+    }
+  }, [
+    toCountry
+  ]);
+  
+  
+  React.useEffect(() => {
+    console.log("here");
+    if(isFrom==1){
+      setCityListFrom(cityList);
+         setisFrom(-1);
+    }
+    if(isFrom==0){
+      setCityListTo(cityList);
+      setisFrom(-1);
+  }
+  }, [cityList]);
+  
+  React.useEffect(() => {
+    console.log("here");
+    if(fromState>0){
+    console.log("from state", fromState ); 
+    getAllCities({stateId : fromState});
+    setisFrom(1);
+    }
+  }, [
+    fromState
+  ]);
+  React.useEffect(() => {
+    console.log("here");
+    if(toState>0){
+    console.log("to state", toState ); 
+    getAllCities({stateId : toState});
+    setisFrom(0);
+    }
+  }, [
+    toState
+  ]);
+  
+  
+  const Logger = () => {
+    const formik = useFormikContext();
+  
+    React.useEffect(() => {
+      console.log("here");
+      const tmp =formik.values.fromCountry||0 ;
+      if(tmp!==fromCountry)
+        setfromCountry(tmp);
+     }, [
+      formik.values.fromCountry 
+     ]);
+  
+     React.useEffect(() => {
+      console.log("here");
+      const tmp =formik.values.toCountry||0 ;
+      if(tmp!==toCountry)
+      setToCountry(tmp);
+   }, [
+    formik.values.toCountry 
+   ]);
+  
+   React.useEffect(() => {
+    console.log("here");
+    const tmp =formik.values.fromState||0 ;
+    if(tmp!==fromState)
+        setFromState(tmp);
+     }, [
+      formik.values.fromState 
+     ]);
+  
+     React.useEffect(() => {
+      console.log("here");
+      const tmp =formik.values.toState||0 ;
+      if(tmp!==toState)
+      setToState(tmp);
+   }, [
+    formik.values.toState 
+   ]);
+  
+    return null;
+  };
 
   if (fetching) {
     return (
@@ -178,6 +276,7 @@ function FlightEditScreen(props) {
         {!!error && <Text style={styles.errorText}>{error}</Text>}
         {formValue && (
           <Form initialValues={formValue} onSubmit={onSubmit} ref={formRef}>
+               <Logger />
             <FormField
               name="flightDate"
               ref={flightDateRef}
@@ -376,8 +475,7 @@ const mapStateToProps = (state) => {
   return {
     countryList: state.countries.countryList ?? [],
     stateProvinceList: state.stateProvinces.stateProvinceList ?? [],
-    stateProvinceListTo: state.stateProvinces.stateProvinceListTo ?? [],
-    cityList: state.cities.cityList ?? [],
+     cityList: state.cities.cityList ?? [],
     itemTypesList: state.itemTypes.itemTypesList ?? [],
     flight: state.flights.flight,
     fetching: state.flights.fetchingOne,
