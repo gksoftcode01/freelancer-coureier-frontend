@@ -30,3 +30,18 @@ export function goBackOrIfParamsOrDefault(targetScreen, defaultScreen) {
     navigate(defaultScreen);
   }
 }
+
+
+export function userDetailsBack() {
+  const currentRoute = navigationRef.current.getCurrentRoute();
+  const whoView =  currentRoute.params.whoView;
+   if (whoView=='client') {
+    navigate('Flights', {
+      screen: 'Flight'
+     }); 
+     } else {
+      navigate('Cargo', {
+        screen: 'CargoRequest'
+       });
+  }
+}

@@ -427,11 +427,11 @@ function CargoRequestDetailScreen(props) {
         ? cargoRequest.bids.map((item, index) => ( 
             <Card key={item.id}>
               <UserInfo>
-                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id })}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id ,whoView : 'courier'})}>
                   <UserImg source={item.toUserImg ? item.toUserImg : require('../../../../assets/avatar3.jpg')} />
                 </TouchableOpacity>
                 <UserInfoText>
-                  <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id })}>
+                  <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id,whoView : 'courier' })}>
                     <UserName>
                       {item.fromUser?.firstName} {item.fromUser?.lastName}
                     </UserName>

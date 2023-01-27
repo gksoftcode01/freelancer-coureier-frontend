@@ -262,13 +262,7 @@ export const flightScreens = [
     route: 'ask/edit',
     component: AskEditScreen,
     options: { title: 'Edit Ask', headerLeft: () => <HeaderBackButton onPress={() => goBackOrIfParamsOrDefault('AskDetail', 'Ask')} /> },
-  },
-  {
-    name: 'AppUserDetail',
-    route: 'AppUser/detail',
-    component: AppUserDetailScreen,
-    options: { title: 'User Details', headerLeft: () => <HeaderBackButton  color={colors.myPurple} onPress={() => navigate('Flight')} /> },
-  }
+  } 
 ]
 
 export const getEntityRoutes = () => {

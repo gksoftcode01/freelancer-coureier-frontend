@@ -17,11 +17,12 @@ import EntityStackScreen, { getEntityRoutes ,flightStack,cargoStack} from './ent
 import StorybookScreen from '../../storybook';
 import ChatScreen from '../modules/chat/chat-screen';
 import DrawerContent from './drawer/drawer-content';
-import { isReadyRef, navigationRef } from './nav-ref';
+import { isReadyRef, navigationRef,userDetailsBack } from './nav-ref';
 import NotFound from './not-found-screen';
 import { ModalScreen } from './modal-screen';
  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
- 
+ import AppUserDetailScreen from '../modules/entities/app-user/app-user-detail-screen'
+ import colors from '../shared/themes/colors';
 
 export const homeScreens = [
     {
@@ -34,6 +35,16 @@ export const homeScreens = [
       route: 'login',
       component: LoginScreen,
       auth: false,
+    },
+    {
+      name: 'AppUserDetail',
+      route: 'AppUserDetail',
+      component: AppUserDetailScreen,
+      auth: true,
+      options: {
+        title: 'User details',
+        headerLeft: () => <HeaderBackButton color={colors.myPurple}  onPress={() =>  userDetailsBack() }/>,
+      },
     },
     {
       name: 'Settings',

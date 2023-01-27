@@ -38,7 +38,8 @@ function SettingsScreen(props) {
     getAllCities,
     cityList,
     account,
-    getAccount
+    getAccount,
+    navigation
   } = props;
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
@@ -56,24 +57,33 @@ function SettingsScreen(props) {
   const onSubmit = (data) => {
     setSuccess('');
     setError('');
-    props.updateAccount(formValueToEntity(data));
+    const newData = {
+      ...account,
+      ...formValueToEntity(data)
+  };
+  
+    props.updateAccount(newData);
   };
   React.useEffect(() => {
      getAllCountries();
  
   }, [  getAllCountries,account]);
 
-
   useDidUpdateEffect(() => {
     if (!props.updating) {
       if (props.error) {
-        setError(props.error);
-      } else {
+                setError(props.error);
+
+      } else if (props.updateSuccess) {
+        setError('');
         props.getAccount();
         setSuccess('Settings updated');
+    navigation.replace('Home' ) ;
       }
     }
-  }, [props.updating]);
+  }, [props.updateSuccess, props.updating, navigation]);
+
+  
 
   // create refs for handling onSubmit functionality
   const formRef = createRef();
@@ -92,6 +102,46 @@ function SettingsScreen(props) {
       setFormValue(entityToFormValue(account));
   
   }, [account ]);
+
+  
+const entityToFormValue = (value) => {
+  if (!value) {
+    return {};
+  }
+  return {
+    id: value.id ?? null,
+    firstName : value.firstName ??null,
+    lastName : value.lastName??null,  
+    email : value.email??null,
+
+    birthDate: value.birthDate ?? null,
+    gender: value.gender ?? null,
+    registerDate: value.registerDate ?? null,
+    phoneNumber: value.phoneNumber ?? null,
+    mobileNumber: value.mobileNumber ?? null,
+     country: value.country && value.country.id ? value.country.id : null,
+   };
+};
+const formValueToEntity = (value) => {
+  console.log(account);
+  const entity = {
+    id: value.id ?? null,
+    firstName : value.firstName ??null,
+    lastName : value.lastName ??null,
+    email: value.email??null,
+    birthDate: value.birthDate ?? null,
+    gender: value.gender ?? null,
+    registerDate: value.registerDate ?? null,
+    phoneNumber: value.phoneNumber ?? null,
+    mobileNumber: value.mobileNumber ?? null,
+  };
+   entity.country = value.country ? { id: value.country } : null;
+ 
+  entity.login = account.login;
+
+  return entity;
+};
+
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
@@ -137,7 +187,7 @@ function SettingsScreen(props) {
               label="Birth Date"
               placeholder="Enter Birth Date"
               testID="birthDateInput"
-              inputType="datetime"
+              inputType="date"
             />   
             <FormField
               name="gender"
@@ -147,23 +197,14 @@ function SettingsScreen(props) {
               testID="genderInput"
               inputType="select-one"
               listItems={GenderType}
-              onSubmitEditing={() => registerDateRef.current?.focus()}
+              onSubmitEditing={() => mobileNumberRef.current?.focus()}
             />
-            <FormField
-              name="registerDate"
-              ref={registerDateRef}
-              label="Register Date"
-              placeholder="Enter Register Date"
-              testID="registerDateInput"
-              inputType="datetime"
-              
-            />
-       
+         
             <FormField
               name="mobileNumber"
               ref={mobileNumberRef}
               label="Mobile Number"
-              placeholder="Enter Mobile Number"
+              placeholder="+971xxxxxxxxx"
               testID="mobileNumberInput"
               inputType="text"
               autoCapitalize="none"
@@ -174,7 +215,7 @@ function SettingsScreen(props) {
               ref={countryRef}
               listItems={countryList}
               listItemLabelField="name"
-              label="Country"
+              label="Nationality"
               placeholder="Select Country"
               testID="countrySelectInput"
             />
@@ -184,48 +225,13 @@ function SettingsScreen(props) {
     </KeyboardAwareScrollView>
   );
 }
-const entityToFormValue = (value) => {
-  if (!value) {
-    return {};
-  }
-  return {
-    id: value.id ?? null,
-    firstName : value.firstName ??null,
-    lastName : value.lastName??null,  
-    email : value.email??null,
-
-    birthDate: value.birthDate ?? null,
-    gender: value.gender ?? null,
-    registerDate: value.registerDate ?? null,
-    phoneNumber: value.phoneNumber ?? null,
-    mobileNumber: value.mobileNumber ?? null,
-     country: value.country && value.country.id ? value.country.id : null,
-   };
-};
-const formValueToEntity = (value) => {
-  console.log(account);
-  const entity = {
-    id: value.id ?? null,
-    firstName : value.firstName ??null,
-    lastName : value.lastName ??null,
-    email: value.email??null,
-    birthDate: value.birthDate ?? null,
-    gender: value.gender ?? null,
-    registerDate: value.registerDate ?? null,
-    phoneNumber: value.phoneNumber ?? null,
-    mobileNumber: value.mobileNumber ?? null,
-  };
-   entity.country = value.country ? { id: value.country } : null;
- 
-  entity.login = account.login;
-
-  return entity;
-};
 const mapStateToProps = (state) => {
   return {
     account: state.account.account,
     updating: state.account.updating,
     error: state.account.error,
+    countryList: state.countries.countryList ?? [],
+
   };
 };
 
@@ -233,9 +239,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     updateAccount: (account) => dispatch(AccountActions.accountUpdateRequest(account)),
     getAccount: () => dispatch(AccountActions.accountRequest()),
-    getAllCountries: (options) => dispatch(CountryActions.countryAllRequest(options)),
-    getAllStateProvinces: (options) => dispatch(StateProvinceActions.stateProvinceAllRequest(options)),
-    getAllCities: (options) => dispatch(CityActions.cityAllRequest(options)),
+    getAllCountries: (options) => dispatch(CountryActions.countryAllRequest(options)), 
     
   };
 };

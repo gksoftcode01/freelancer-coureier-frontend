@@ -114,11 +114,11 @@ import FilterModal from '../../../shared/components/filter/filter-model';
           <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })}>
             <Card  >
               <UserInfo>
-                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'client' })}>
                   <UserImg source={item.toUserImg ? item.toUserImg : require('../../../../assets/avatar3.jpg')} />
                 </TouchableOpacity>
                 <UserInfoText>
-                  <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id })}>
+                  <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'client' })}>
                     <UserName>
                       {item.createBy.firstName} {item.createBy.lastName}
                     </UserName>
