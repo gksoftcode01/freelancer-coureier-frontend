@@ -9,24 +9,6 @@ import CargoRequestDeleteModal from './cargo-request-delete-modal';
 import styles from './cargo-request-styles';
 import AlertMessage from '../../../shared/components/alert-message/alert-message';
 
-import {
-  Container,
-  Card,
-  UserInfo,
-  UserImg,
-  UserName,
-  UserInfoText,
-  PostTime,
-  PostText,
-  PostImg,
-  InteractionWrapper,
-  Interaction,
-  InteractionText,
-  Divider,
-  UserRate,
-  itemType,
-  ControlIcons,
-} from '../../../shared/themes/FeedStyles';
 import BidActions from '../bid/bid.reducer';
 
 import moment from 'moment/min/moment-with-locales';
@@ -41,6 +23,29 @@ import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import UserRateActions from '../user-rate/user-rate.reducer';
 import { Notifier, Easing } from 'react-native-notifier';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImgDetail,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType,
+  ControlIcons,
+  PackageImg,
+} from '../../../shared/themes/FeedStyles';
+
+ 
+
 
 function CargoRequestDetailScreen(props) {
   const {
@@ -60,7 +65,6 @@ function CargoRequestDetailScreen(props) {
     updateUserRate,
     getAllUserRates,
     userRateList,
-     
   } = props;
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
   const [deleteBidModalVisible, setDeleteBidModalVisible] = React.useState(false);
@@ -84,6 +88,7 @@ function CargoRequestDetailScreen(props) {
   const [page, setPage] = React.useState(0);
   const [sort /*, setSort*/] = React.useState('id,asc');
   const [size /*, setSize*/] = React.useState(20);
+const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
   useFocusEffect(
     React.useCallback(() => {
       if (bidToDelete > 0) setDeleteBidModalVisible(true);
@@ -113,13 +118,11 @@ function CargoRequestDetailScreen(props) {
         setDeleteBidModalVisible(false);
 
         getCargoRequest(routeEntityId);
-        getAllUserRates({ page: page, sort, size , cargoId :routeEntityId });  
+        getAllUserRates({ page: page, sort, size, cargoId: routeEntityId });
       }
     }, [routeEntityId, getCargoRequest, navigation]),
   );
 
-   
-  
   if (!entityId && !fetching && error) {
     return (
       <View style={styles.loading}>
@@ -174,8 +177,8 @@ function CargoRequestDetailScreen(props) {
     getCargoRequest(routeEntityId);
   };
 
-  const showNotify =()=>{
-    if(updateSuccess){
+  const showNotify = () => {
+    if (updateSuccess) {
       Notifier.showNotification({
         title: 'Rating',
         description: 'Saved successfully!',
@@ -187,7 +190,7 @@ function CargoRequestDetailScreen(props) {
         hideOnPress: false,
       });
     }
-  }
+  };
   const saveRateCourier = () => {
     const entity = {
       id: ratingIdCourier,
@@ -217,221 +220,226 @@ function CargoRequestDetailScreen(props) {
     showNotify();
   };
 
-  if (!entityId || fetching || !correctEntityLoaded) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  
- 
+  // if (!entityId || fetching || !correctEntityLoaded) {
+  //   return (
+  //     <View style={styles.loading}>
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="cargoRequestDetailScrollView">
-      <Card key={cargoRequest.id}>
-        {account.id == cargoRequest.createBy.id ? (
-          <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
-            <Ionicons name="trash-outline" size={24} color={'red'} onPress={() => setDeleteModalVisible(true)} />
-            {'  '}
-            <Ionicons
-              name="create-outline"
-              size={24}
-              color={'blue'}
-              onPress={() => navigation.navigate('CargoRequestEdit', { entityId })}
-            />
+      <Spinner visible={!entityId || fetching || !correctEntityLoaded} textStyle={{ color: '#FFF' }} />
 
-            {deleteModalVisible && (
-              <CargoRequestDeleteModal
-                navigation={navigation}
-                visible={deleteModalVisible}
-                setVisible={setDeleteModalVisible}
-                entity={cargoRequest}
-                testID="cargoRequestDeleteModal"
+      {!fetching && (
+        <Card key={cargoRequest.id}>
+          <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
+           <PackageImg source={cargoRequest.imageUrl ? cargoRequest.imageUrl : require('../../../../assets/package.png')} /> 
+    
+          </View>
+
+     
+
+          {account.id == cargoRequest.createBy.id ? (
+            <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
+              <Ionicons name="trash-outline" size={24} color={'red'} onPress={() => setDeleteModalVisible(true)} />
+              {'  '}
+              <Ionicons
+                name="create-outline"
+                size={24}
+                color={'blue'}
+                onPress={() => navigation.navigate('CargoRequestEdit', { entityId })}
               />
-            )}
-          </ControlIcons>
-        ) : cargoRequest.status.id == 1 ? (
-          <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
-            <TouchableOpacity onPress={() => setAddBidModalVisible(true)}>
-              <Text style={styles.blueBtnTxt}>
-                {' '}
-                Add bid <Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
-              </Text>
-            </TouchableOpacity>
-          </ControlIcons>
-        ) : null}
 
-        <PostText>
-          <Text style={styles.label}>Budget: </Text>
-          <Text testID="budget">{cargoRequest.budget} (AED) </Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>IsToDoor: </Text>
-          <Text testID="isToDoor">{cargoRequest.isToDoor?"Yes":"No"}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>CreateDate: </Text>
-          <Text testID="createDate"> {moment(new Date(cargoRequest.createDate)).format('MMMM Do YYYY, h:mm a')}</Text>
-        </PostText>
-
-        <PostText>
-          <Text style={styles.label}>From Country: </Text>
-          <Text testID="fromCountry">{String(cargoRequest.fromCountry ? cargoRequest.fromCountry.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>To Country: </Text>
-          <Text testID="toCountry">{String(cargoRequest.toCountry ? cargoRequest.toCountry.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>From State: </Text>
-          <Text testID="fromState">{String(cargoRequest.fromState ? cargoRequest.fromState.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>To State: </Text>
-          <Text testID="toState">{String(cargoRequest.toState ? cargoRequest.toState.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>From City: </Text>
-          <Text testID="fromCity">{String(cargoRequest.fromCity ? cargoRequest.fromCity.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>To City: </Text>
-          <Text testID="toCity">{String(cargoRequest.toCity ? cargoRequest.toCity.name : '')}</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>weight : </Text>
-          <Text>{cargoRequest.weight} KG</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>height : </Text>
-          <Text>{cargoRequest.height} CM</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>width : </Text>
-          <Text>{cargoRequest.width} CM</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>length : </Text>
-          <Text>{cargoRequest.length} CM</Text>
-        </PostText>
-        <PostText>
-          <Text style={styles.label}>Description : </Text>
-          <Text>{cargoRequest.description}</Text>
-        </PostText>
-
-        
-
-        <PostText>
-          <Text style={styles.label}>Req Item Types: </Text>
-          {cargoRequest.reqItemTypes?.length > 0 ? (
-            <View style={styles.flexRow}>
-              {cargoRequest.reqItemTypes.map((entity, index) => (
-                <>
-                  <Text style={styles.backgroundlabel} key={index}>
-                    {String(entity.name || ' ')}
-                  </Text>{' '}
-                </>
-              ))}{' '}
-            </View>
+              {deleteModalVisible && (
+                <CargoRequestDeleteModal
+                  navigation={navigation}
+                  visible={deleteModalVisible}
+                  setVisible={setDeleteModalVisible}
+                  entity={cargoRequest}
+                  testID="cargoRequestDeleteModal"
+                />
+              )}
+            </ControlIcons>
+          ) : cargoRequest.status.id == 1 ? (
+            <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
+              <TouchableOpacity onPress={() => setAddBidModalVisible(true)}>
+                <Text style={styles.blueBtnTxt}>
+                  {' '}
+                  Add bid <Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
+                </Text>
+              </TouchableOpacity>
+            </ControlIcons>
           ) : null}
-        </PostText>
-        {cargoRequest.status.id == 2 ? (
-          <>
-            <View style={{ textAlign: 'center' }}>
-              <Text style={styles.label} color={'red'}>
-                This cargo request has been closed
-              </Text>
-            </View>
-            <PostText>
-              <Text style={styles.label}>Taken By: </Text>
-              <Text>{String(cargoRequest.takenBy ? `${cargoRequest.takenBy?.firstName} ${cargoRequest.takenBy?.lastName}` : '')}</Text>
-            </PostText>
-            <PostText>
-              <Text style={styles.label}>AgreedPrice: </Text>
-              <Text testID="agreedPrice">{cargoRequest.agreedPrice} AED</Text>
-            </PostText>
-       
-            {cargoRequest.createBy.id == account.id ? (
-              <>
-                <PostText>
-                  <Text style={styles.label}> Please rate the freelance courier: </Text>
-                </PostText>
-                <View style={{ padding: '10' }}>
-                  <StarRating rating={ratingCourier} onChange={setRatingCourier} starSize={24} />
-                </View>
-                <PostText>
-                  <Text style={styles.label}>comments: </Text>
-                </PostText>
-                <View>
-                  <TextInput
-                    editable
-                    multiline
-                    numberOfLines={4}
-                    maxLength={400}
-                    onChangeText={(text) => onChangeTextCourier(text)}
-                    value={userNotesCourier}
-                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
-                  />
-                </View>
 
-                <View style={styles.userBtnWrapper}>
-                  <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateCourier()}>
-                    <Text style={styles.blueBtnTxt}> Save </Text>
-                  </TouchableOpacity>
-                </View>
-                 
-              </>
-            ) :cargoRequest.takenBy.id == account.id ? (
-              <>
-                <PostText>
-                  <Text style={styles.label}> Please rate the client: </Text>
-                </PostText>
-                <View style={{ padding: '10' }}>
-                  <StarRating rating={ratingRequester} onChange={setRatingRequester} starSize={24} />
-                </View>
-                <PostText>
-                  <Text style={styles.label}>comments: </Text>
-                </PostText>
-                <View>
-                  <TextInput
-                    editable
-                    multiline
-                    numberOfLines={4}
-                    maxLength={400}
-                    onChangeText={(text) => onChangeTextRequester(text)}
-                    value={userNotesRequester}
-                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
-                  />
-                </View>
+          <PostText>
+            <Text style={styles.label}>Budget: </Text>
+            <Text testID="budget">{cargoRequest.budget} (AED) </Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>IsToDoor: </Text>
+            <Text testID="isToDoor">{cargoRequest.isToDoor ? 'Yes' : 'No'}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>CreateDate: </Text>
+            <Text testID="createDate"> {moment(new Date(cargoRequest.createDate)).format('MMMM Do YYYY, h:mm a')}</Text>
+          </PostText>
 
-                <View style={styles.userBtnWrapper}>
-                  <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateRequester()}>
-                    <Text style={styles.blueBtnTxt}> Save </Text>
-                  </TouchableOpacity>
-                 </View>
-             
-              </>
+          <PostText>
+            <Text style={styles.label}>From Country: </Text>
+            <Text testID="fromCountry">{String(cargoRequest.fromCountry ? cargoRequest.fromCountry.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>To Country: </Text>
+            <Text testID="toCountry">{String(cargoRequest.toCountry ? cargoRequest.toCountry.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>From State: </Text>
+            <Text testID="fromState">{String(cargoRequest.fromState ? cargoRequest.fromState.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>To State: </Text>
+            <Text testID="toState">{String(cargoRequest.toState ? cargoRequest.toState.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>From City: </Text>
+            <Text testID="fromCity">{String(cargoRequest.fromCity ? cargoRequest.fromCity.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>To City: </Text>
+            <Text testID="toCity">{String(cargoRequest.toCity ? cargoRequest.toCity.name : '')}</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>weight : </Text>
+            <Text>{cargoRequest.weight} KG</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>height : </Text>
+            <Text>{cargoRequest.height} CM</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>width : </Text>
+            <Text>{cargoRequest.width} CM</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>length : </Text>
+            <Text>{cargoRequest.length} CM</Text>
+          </PostText>
+          <PostText>
+            <Text style={styles.label}>Description : </Text>
+            <Text>{cargoRequest.description}</Text>
+          </PostText>
+
+          <PostText>
+            <Text style={styles.label}>Req Item Types: </Text>
+            {cargoRequest.reqItemTypes?.length > 0 ? (
+              <View style={styles.flexRow}>
+                {cargoRequest.reqItemTypes.map((entity, index) => (
+                  <>
+                    <Text style={styles.backgroundlabel} key={index}>
+                      {String(entity.name || ' ')}
+                    </Text>{' '}
+                  </>
+                ))}{' '}
+              </View>
             ) : null}
-          </>
-        ) : null}
-      </Card>
+          </PostText>
+          {cargoRequest.status.id == 2 ? (
+            <>
+              <View style={{ textAlign: 'center' }}>
+                <Text style={styles.label} color={'red'}>
+                  This cargo request has been closed
+                </Text>
+              </View>
+              <PostText>
+                <Text style={styles.label}>Taken By: </Text>
+                <Text>{String(cargoRequest.takenBy ? `${cargoRequest.takenBy?.firstName} ${cargoRequest.takenBy?.lastName}` : '')}</Text>
+              </PostText>
+              <PostText>
+                <Text style={styles.label}>AgreedPrice: </Text>
+                <Text testID="agreedPrice">{cargoRequest.agreedPrice} AED</Text>
+              </PostText>
 
+              {cargoRequest.createBy.id == account.id ? (
+                <>
+                  <PostText>
+                    <Text style={styles.label}> Please rate the freelance courier: </Text>
+                  </PostText>
+                  <View style={{ padding: '10' }}>
+                    <StarRating rating={ratingCourier} onChange={setRatingCourier} starSize={24} />
+                  </View>
+                  <PostText>
+                    <Text style={styles.label}>comments: </Text>
+                  </PostText>
+                  <View>
+                    <TextInput
+                      editable
+                      multiline
+                      numberOfLines={4}
+                      maxLength={400}
+                      onChangeText={(text) => onChangeTextCourier(text)}
+                      value={userNotesCourier}
+                      style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                    />
+                  </View>
+
+                  <View style={styles.userBtnWrapper}>
+                    <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateCourier()}>
+                      <Text style={styles.blueBtnTxt}> Save </Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : cargoRequest.takenBy.id == account.id ? (
+                <>
+                  <PostText>
+                    <Text style={styles.label}> Please rate the client: </Text>
+                  </PostText>
+                  <View style={{ padding: '10' }}>
+                    <StarRating rating={ratingRequester} onChange={setRatingRequester} starSize={24} />
+                  </View>
+                  <PostText>
+                    <Text style={styles.label}>comments: </Text>
+                  </PostText>
+                  <View>
+                    <TextInput
+                      editable
+                      multiline
+                      numberOfLines={4}
+                      maxLength={400}
+                      onChangeText={(text) => onChangeTextRequester(text)}
+                      value={userNotesRequester}
+                      style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                    />
+                  </View>
+
+                  <View style={styles.userBtnWrapper}>
+                    <TouchableOpacity style={styles.blueBtn} onPress={() => saveRateRequester()}>
+                      <Text style={styles.blueBtnTxt}> Save </Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : null}
+            </>
+          ) : null}
+        </Card>
+      )}
       {/* <FlatList
         data={cargoRequest.bids} 
         keyExtractor={(item) => item.id}
          ListEmptyComponent={renderEmpty}
         renderItem={({ item }) => (  */}
-      {cargoRequest.bids?.length > 0  /*cargoRequest.status != 1 && */
-        ? cargoRequest.bids.map((item, index) => ( 
+      {cargoRequest.bids?.length > 0 /*cargoRequest.status != 1 && */
+        ? cargoRequest.bids.map((item, index) => (
             <Card key={item.id}>
               <UserInfo>
-                <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id ,whoView : 'courier'})}>
-                  <UserImg source={item.toUserImg ? item.toUserImg : require('../../../../assets/avatar3.jpg')} />
+                <TouchableOpacity
+                  onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id, whoView: 'courier' })}>
+                  <UserImg source={item.fromUser.imageUrl ? item.fromUser.imageUrl : require('../../../../assets/avatar3.jpg')} />
                 </TouchableOpacity>
                 <UserInfoText>
-                  <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id,whoView : 'courier' })}>
+                  <TouchableOpacity
+                    onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id, whoView: 'courier' })}>
                     <UserName>
                       {item.fromUser?.firstName} {item.fromUser?.lastName}
                     </UserName>
@@ -456,27 +464,27 @@ function CargoRequestDetailScreen(props) {
                 <Text style={styles.label}> {item.notes}</Text>{' '}
               </PostText>
               {cargoRequest.status.id != 2 ? (
-                <> 
-              {item.status == 'New' && account.id == cargoRequest.createBy.id ? (
-                <View style={styles.userBtnWrapper}>
-                  <TouchableOpacity style={styles.blueBtn} onPress={() => updateBidStatus(item, 'Approve')}>
-                    <Text style={styles.blueBtnTxt}> Approve </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.yellowdBtn} onPress={() => updateBidStatus(item, 'Reject')}>
-                    <Text style={styles.yellowdBtnTxt}> Decline </Text>
-                  </TouchableOpacity>
-                </View>
-              ) : null}
+                <>
+                  {item.status == 'New' && account.id == cargoRequest.createBy.id ? (
+                    <View style={styles.userBtnWrapper}>
+                      <TouchableOpacity style={styles.blueBtn} onPress={() => updateBidStatus(item, 'Approve')}>
+                        <Text style={styles.blueBtnTxt}> Approve </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.yellowdBtn} onPress={() => updateBidStatus(item, 'Reject')}>
+                        <Text style={styles.yellowdBtnTxt}> Decline </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
 
-              {item.status == 'New' && account.id == item.fromUser.id ? (
-                <View style={styles.userBtnWrapper}>
-                  <TouchableOpacity style={styles.yellowdBtn} onPress={() => setBidToDelete(item.id)}>
-                    <Text style={styles.yellowdBtnTxt}> Delete </Text>
-                  </TouchableOpacity>
-                </View>
+                  {item.status == 'New' && account.id == item.fromUser.id ? (
+                    <View style={styles.userBtnWrapper}>
+                      <TouchableOpacity style={styles.yellowdBtn} onPress={() => setBidToDelete(item.id)}>
+                        <Text style={styles.yellowdBtnTxt}> Delete </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
+                </>
               ) : null}
-   </>
-              ):(null)}
               {item.status != 'New' ? (
                 <View style={styles.centeredView}>
                   <Text style={[{ color: item.status == 'Approve' ? Colors.jhipsterBlue : 'red' }, styles.label]}>
@@ -484,7 +492,7 @@ function CargoRequestDetailScreen(props) {
                   </Text>
                 </View>
               ) : null}
-          
+
               <PostTime>{moment(new Date(item.createDate)).fromNow()}</PostTime>
             </Card>
           ))
@@ -600,7 +608,6 @@ const mapStateToProps = (state) => {
     errorUpdating: state.cargoRequests.errorUpdating,
     userRateList: state.userRates.userRateList,
     updateSuccess: state.userRates.updateSuccess,
-
   };
 };
 

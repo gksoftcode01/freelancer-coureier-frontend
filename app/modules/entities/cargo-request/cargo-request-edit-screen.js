@@ -1,6 +1,5 @@
 import React, { createRef } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
-import { connect } from 'react-redux';
+ import { connect } from 'react-redux';
 
 import CargoRequestActions from './cargo-request.reducer';
 import CargoRequestStatusActions from '../cargo-request-status/cargo-request-status.reducer';
@@ -16,7 +15,37 @@ import Form from '../../../shared/components/form/jhi-form';
 import { useDidUpdateEffect } from '../../../shared/util/use-did-update-effect';
 import styles from './cargo-request-styles';
 import { Formik, Field, ErrorMessage,  useFormikContext } from "formik";
+import { firebaseConfig } from '../../../config/firebaseConfig';
+import { getApps, initializeApp } from 'firebase/app';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import * as ImagePicker from 'expo-image-picker';
+import { ActivityIndicator, Button, Image, Share, StatusBar, StyleSheet, Text, View, LogBox, TouchableOpacity } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import uuid from 'uuid';
+import { Constants } from 'expo';
+import {
+  Container,
+  Card,
+  UserInfo,
+  UserImgDetail,
+  UserName,
+  UserInfoText,
+  PostTime,
+  PostText,
+  PostImg,
+  InteractionWrapper,
+  Interaction,
+  InteractionText,
+  Divider,
+  UserRate,
+  itemType,
+  ControlIcons,
+  PackageImg
+} from '../../../shared/themes/FeedStyles';
+import { Platform } from 'react-native';
 function CargoRequestEditScreen(props) {
   const {
     getCargoRequest,
@@ -44,6 +73,33 @@ function CargoRequestEditScreen(props) {
     account
   } = props;
 
+
+   // Editing this file with fast refresh will reinitialize the app on every refresh, let's not do that
+   if (!getApps().length) {
+    const app = initializeApp(firebaseConfig);
+  }
+
+  // Firebase sets some timeers for a long period, which will trigger some warnings. Let's turn that off for this example
+  LogBox.ignoreLogs([`Setting a timer for a long period`]);
+
+  const [image, setimage] = React.useState(null);
+  const [uploading, setuploading] = React.useState(false);
+  React.useEffect(() => {
+    async function checkPermission() {
+      // You can await here
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+      // ...
+    }
+    checkPermission();
+  }, []); // Or [] if effect doesn't need props or state
+
+
+  
   const [formValue, setFormValue] = React.useState();
   const [error, setError] = React.useState('');
 
@@ -139,6 +195,7 @@ const [toState, setToState] = React.useState(0);
 
 const [isFrom, setisFrom] = React.useState(-1);
 
+   
 
 React.useEffect(() => {
   console.log("here");
@@ -253,6 +310,8 @@ const entityToFormValue = (value) => {
   if (!value) {
     return {};
   }
+  setimage(value.imageUrl);
+
   return {
     id: value.id ?? null,
     budget: value.budget ?? null,
@@ -265,7 +324,6 @@ const entityToFormValue = (value) => {
     length: value.length ?? null,
     height: value.height ?? null,
     description: value.description ?? null,
-
     fromCountry: value.fromCountry && value.fromCountry.id ? value.fromCountry.id : null,
     toCountry: value.toCountry && value.toCountry.id ? value.toCountry.id : null,
     fromState: value.fromState && value.fromState.id ? value.fromState.id : null,
@@ -289,12 +347,12 @@ const formValueToEntity = (value) => {
   };
   if(!isNewEntity){
     entity.takenBy = cargoRequest.takenBy? cargoRequest.takenBy:null;
-    entitycreateDate=cargoRequest.createDate ?? null;
+    entity.createDate=cargoRequest.createDate ?? null;
     entity.agreedPrice= cargoRequest.agreedPrice ?? null;
   }
   entity.createBy = cargoRequest?.createBy?account.id:null;
   entity.status = cargoRequest?.status?cargoRequest.status:1;
-
+entity.imageUrl = value.imageUrl??null;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
   entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
   entity.fromState = value.fromState ? { id: value.fromState } : null;
@@ -304,15 +362,81 @@ const formValueToEntity = (value) => {
   entity.reqItemTypes = value.reqItemTypes.map((id) => ({ id }));
   return entity;
 };
-if (fetching) {
-  return (
-    <View style={styles.loading}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
+
+const takePhoto = async () => {
+  let pickerResult = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+    aspect: [4, 3],
+  });
+
+  handleImagePicked(pickerResult);
+};
+
+const pickImage = async () => {
+  let pickerResult = await ImagePicker.launchImageLibraryAsync({
+    allowsEditing: true,
+    aspect: [4, 3],
+  });
+
+  console.log({ pickerResult });
+
+  handleImagePicked(pickerResult);
+};
+
+const handleImagePicked = async (pickerResult) => {
+  try {
+    setuploading(true);
+
+    if (!pickerResult.cancelled) {
+      const uploadUrl = await uploadImageAsync(pickerResult.uri);
+      setimage(uploadUrl);
+      console.log(uploadUrl);
+      if (uploadUrl && !isNewEntity) {
+        const newData = {
+          ...cargoRequest,
+          imageUrl:image,
+        };
+       updateCargoRequest(newData)
+      }
+    }
+  } catch (e) {
+    console.log(e);
+    alert('Upload failed, sorry :(');
+  } finally {
+    setuploading(false);
+  }
+};
+ 
+async function uploadImageAsync(uri) {
+  // Why are we using XMLHttpRequest? See:
+  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function (e) {
+      console.log(e);
+      reject(new TypeError('Network request failed'));
+    };
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+  });
+
+  const fileRef = ref(getStorage(), uuid.v4());
+  const result = await uploadBytes(fileRef, blob);
+
+  // We're done with the blob, close and release it
+  try {
+    blob.close();
+  } catch (error) {}
+  return await getDownloadURL(fileRef);
 }
+
   return (
     <View style={styles.container}>
+
       <KeyboardAwareScrollView
         enableResetScrollToCoords={false}
         testID="cargoRequestEditScrollView"
@@ -320,9 +444,27 @@ if (fetching) {
         keyboardDismissMode="on-drag"
         contentContainerStyle={styles.paddedScrollView}>
         {!!error && <Text style={styles.errorText}>{error}</Text>}
+
+        <Spinner visible={uploading || updating ||fetching}  textStyle={{ color: '#FFF' }} />
+        <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
+          
+        <PackageImg  
+        source={image?image: require('../../../../assets/package.png')} />
+
+        <View style={styles.userBtnWrapper}>
+        <TouchableOpacity style={styles.blueBtn} onPress={pickImage}>
+          <Text style={styles.blueBtnTxt}> Choose image </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.blueBtn} onPress={() => takePhoto}>
+          <Text style={styles.blueBtnTxt}> Take a photo </Text>
+        </TouchableOpacity>
+      </View>
+      </View>
+
         {formValue && (
           <Form initialValues={formValue} onSubmit={onSubmit} ref={formRef}   
           >
+          
             <Logger />
             <FormField
               name="weight"

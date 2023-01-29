@@ -43,7 +43,7 @@ export const homeScreens = [
       auth: true,
       options: {
         title: 'User details',
-        headerLeft: () => <HeaderBackButton color={colors.myPurple}  onPress={() =>  userDetailsBack() }/>,
+        headerLeft: () => <HeaderBackButton color={colors.myPurple}  onPress={() => navigate('Home') }/>,
       },
     },
     {
@@ -71,12 +71,7 @@ export const homeScreens = [
       auth: true,
     },
   
-    {
-      name: 'Chat',
-      route: 'chat',
-      component: ChatScreen,
-      auth: true,
-    },
+   
   ];
 
   if (__DEV__) {

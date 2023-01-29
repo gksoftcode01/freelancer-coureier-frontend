@@ -32,6 +32,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import colors from '../shared/themes/colors'
+import chatScreen from '../modules/chat/chat-screen';
 const linking = {
   prefixes: ['rnapp://', Linking.makeUrl('/')],
   config: {
@@ -45,7 +46,13 @@ const linking = {
     },
   },
 };
-
+export const chatScreens = [
+{
+  name: 'Chat',
+  route: 'chat',
+  component: ChatScreen,
+  auth: true,
+},]
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -164,6 +171,17 @@ function NavContainer(props) {
         headerShown: false,
         tabBarIcon: ({color, size}) => (
           <Ionicons name="briefcase" color={color} size={size} />
+        ),
+      }}
+    />
+       <Tab.Screen
+      name="Chat"
+      component={chatScreen}
+      options={{
+         tabBarLabel: 'Chat',
+        headerShown: false,
+        tabBarIcon: ({color, size}) => (
+          <Ionicons name="notifications" color={color} size={size} />
         ),
       }}
     />

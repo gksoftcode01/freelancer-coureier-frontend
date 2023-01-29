@@ -52,8 +52,22 @@ export const UserImg = styled.Image`
     width: 50px;
     height: 50px;
     border-radius: 25px;
+    justify-content: center;
+`;
+export const PackageImg = styled.Image`
+    width: 200px;
+    height: 150px;
+    justify-content: center;
+    padding-botton:5px;
+    padding-top:5px;
 `;
 
+export const UserImgDetail = styled.Image`
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    justify-content: center;
+`;
 export const UserInfoText = styled.View`
     flex-direction: column;
     justify-content: center;

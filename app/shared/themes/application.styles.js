@@ -221,6 +221,12 @@ const ApplicationStyles = {
     submitButton: {
       backgroundColor: 'red',
     },
+    actionButtonIcon: {
+      fontSize: 20,
+      height: 22,
+      color: 'white',
+      zIndex: 200,
+    },
     textStyle: {
       color: 'white',
       fontWeight: 'bold',

@@ -92,12 +92,23 @@ export const cargoScreens = [
     
   },
   {
+    name: 'AppUserDetail',
+    route: 'AppUserDetail',
+    component: AppUserDetailScreen,
+    auth: true,
+    options: {
+      title: 'User details',
+      headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('CargoRequest')} /> 
+    },
+  },
+  {
 
     name: 'CargoFilter',
     route: 'cargo-request/filter',
     component: CargoFilterScreen,
     options: { title: 'Filter couriers request',  labelStyle : {color : colors.myPurple},
-     headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('CargoRequest')} /> },
+     headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('CargoRequest')} /> 
+    },
   },
   {
     name: 'CargoRequestDetail',
@@ -209,6 +220,16 @@ export const flightScreens = [
       />
       </View>
       ),
+    },
+  },
+  {
+    name: 'AppUserDetail',
+    route: 'AppUserDetail',
+    component: AppUserDetailScreen,
+    auth: true,
+    options: {
+      title: 'User details',
+      headerLeft: () => <HeaderBackButton color={colors.myPurple} onPress={() => navigate('Flight')} /> 
     },
   },
   {
