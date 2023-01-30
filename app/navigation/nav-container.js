@@ -23,7 +23,7 @@ import EntityStackScreen, { getEntityRoutes ,flightStack,cargoStack} from './ent
 import StorybookScreen from '../../storybook';
 import ChatScreen from '../modules/chat/chat-screen';
 import DrawerContent from './drawer/drawer-content';
-import { isReadyRef, navigationRef } from './nav-ref';
+import { isReadyRef, navigate, navigationRef } from './nav-ref';
 import NotFound from './not-found-screen';
 import { FilterScreen } from './FilterScreen';
 import { DrawerButton } from './drawer/drawer-button';
@@ -32,7 +32,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
 import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import colors from '../shared/themes/colors'
-import chatScreen from '../modules/chat/chat-screen';
+import NotificationScreen from '../modules/entities/notification/notifications-screen';
+import WebsocketService from '../shared/websockets/websocket.service';
+import { getLogin } from '../shared/reducers/account.reducer';
+import ChatActions from '../modules/chat/chat.reducer';
+import { Notifier, Easing } from 'react-native-notifier';
+
+
 const linking = {
   prefixes: ['rnapp://', Linking.makeUrl('/')],
   config: {
@@ -82,10 +88,23 @@ const getScreens = (props) => {
 };
 
 function NavContainer(props) {
-  const { loaded, getAccount } = props;
+  const { loaded, getAccount , username, chat } = props;
   const lastAppState = 'active';
  
-  
+  React.useEffect(()=>{
+    if(chat)
+      if(chat.length > 0){
+        Notifier.showNotification({
+        title: 'Notification',
+        description: 'You have got a new Notification!',
+        duration: 3000,
+        showAnimationDuration: 800,
+        showEasing: Easing.bounce,
+         onPress: () => navigationRef.current.navigate('Notification'),
+        hideOnPress: true,
+      });
+    }
+  },[chat]);
 
   React.useEffect(() => {
     return () => {
@@ -114,6 +133,18 @@ function NavContainer(props) {
   const dimensions = useWindowDimensions();
   const scheme = useColorScheme();
 
+
+  React.useEffect(() => {
+    if (username !== 'anonymoususer') {
+      WebsocketService.subscribeToChat();
+    }
+  }, [username]);
+  React.useEffect(() => {
+    WebsocketService.connect();
+    return function cleanup() {
+      WebsocketService.disconnect();
+    };
+  }, []);
   return !loaded ? (
     
     <View>
@@ -127,8 +158,7 @@ function NavContainer(props) {
       onReady={() => {
         isReadyRef.current = true;
       }}>
-
-         <Tab.Navigator
+          <Tab.Navigator
            initialRouteName="Home"
            firstRoute ="Home"
            
@@ -175,10 +205,10 @@ function NavContainer(props) {
       }}
     />
        <Tab.Screen
-      name="Chat"
-      component={chatScreen}
+      name="Notification"
+      component={NotificationScreen}
       options={{
-         tabBarLabel: 'Chat',
+         tabBarLabel: 'Notification',
         headerShown: false,
         tabBarIcon: ({color, size}) => (
           <Ionicons name="notifications" color={color} size={size} />
@@ -267,12 +297,16 @@ const mapStateToProps = (state) => {
   return {
     loaded: state.appState.rehydrationComplete,
     account: state.account.account,
+    chat: state.chat.chat,
+    username: getLogin(state.account),
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getAccount: () => dispatch(AccountActions.accountRequest()),
+    resetChat: dispatch(ChatActions.chatReset()),
+
   };
 };
 

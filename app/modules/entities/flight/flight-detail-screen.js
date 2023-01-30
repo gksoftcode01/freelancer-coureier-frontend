@@ -272,16 +272,11 @@ function FlightDetailScreen(props) {
  
 
       <Modal animationType="slide" transparent={true} visible={addAskModalVisible}>
-        <KeyboardAwareScrollView
-          enableResetScrollToCoords={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={styles.paddedScrollView}>
+      
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Form onSubmit={onSubmit} ref={formRef}>
                 <FormField name="price" ref={priceRef} label="Ask amount" placeholder="Enter ask amount (AED)" inputType="number" />
-
                 <FormField
                   name="notes"
                   ref={notesRef}
@@ -289,7 +284,7 @@ function FlightDetailScreen(props) {
                   testID="notesInput"
                   inputType="text"
                   autoCapitalize="none"
-                  value="Please check my request"
+                  placeholder="Please check my request"
                   onSubmitEditing={() => priceRef.current?.focus()}
                 />
                    <FormField
@@ -303,8 +298,7 @@ function FlightDetailScreen(props) {
               required="true"
               />
 
-                <View style={[styles.flexRow]}>
-                <View style={styles.userBtnWrapper}>
+                 <View style={styles.userBtnWrapper}>
                       <TouchableHighlight
                     style={[styles.openButton, styles.cancelButton]}
                     onPress={() => {
@@ -322,11 +316,9 @@ function FlightDetailScreen(props) {
                         </TouchableHighlight>  
                         )}
                   </View>
-                </View>
-              </Form>
+               </Form>
             </View>
           </View>
-        </KeyboardAwareScrollView>
       </Modal>
 
       <Modal animationType="slide" transparent={true} visible={deleteAskModalVisible}>

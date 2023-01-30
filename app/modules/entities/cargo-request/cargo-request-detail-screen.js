@@ -28,6 +28,7 @@ import {
   Container,
   Card,
   UserInfo,
+  UserImg,
   UserImgDetail,
   UserName,
   UserInfoText,
@@ -230,7 +231,7 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="cargoRequestDetailScrollView">
-      <Spinner visible={!entityId || fetching || !correctEntityLoaded} textStyle={{ color: '#FFF' }} />
+      <Spinner visible={!entityId || fetching || !correctEntityLoaded || userRateUpdating} textStyle={{ color: '#FFF' }} />
 
       {!fetching && (
         <Card key={cargoRequest.id}>
@@ -435,7 +436,7 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
               <UserInfo>
                 <TouchableOpacity
                   onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id, whoView: 'courier' })}>
-                  <UserImg source={item.fromUser.imageUrl ? item.fromUser.imageUrl : require('../../../../assets/avatar3.jpg')} />
+                  <UserImg source={item.fromUser?.imageUrl ? item.fromUser?.imageUrl : require('../../../../assets/avatar3.jpg')} />
                 </TouchableOpacity>
                 <UserInfoText>
                   <TouchableOpacity
@@ -608,6 +609,8 @@ const mapStateToProps = (state) => {
     errorUpdating: state.cargoRequests.errorUpdating,
     userRateList: state.userRates.userRateList,
     updateSuccess: state.userRates.updateSuccess,
+    userRateUpdating: state.userRates.updating,
+
   };
 };
 

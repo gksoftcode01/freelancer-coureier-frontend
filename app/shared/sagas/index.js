@@ -19,6 +19,7 @@ import { UserRateTypes } from '../../modules/entities/user-rate/user-rate.reduce
 import { ItemTypesTypes } from '../../modules/entities/item-types/item-types.reducer';
 import { AppUserTypes } from '../../modules/entities/app-user/app-user.reducer';
 import { FlightTypes } from '../../modules/entities/flight/flight.reducer';
+import { NotificationTypes } from '../../modules/entities/notification/notification.reducer';
 import { CargoRequestStatusTypes } from '../../modules/entities/cargo-request-status/cargo-request-status.reducer';
 import { CargoRequestTypes } from '../../modules/entities/cargo-request/cargo-request.reducer';
 import { CargoRequestDetailsTypes } from '../../modules/entities/cargo-request-details/cargo-request-details.reducer';
@@ -42,6 +43,7 @@ import UserRateSagas from '../../modules/entities/user-rate/user-rate.sagas';
 import ItemTypesSagas from '../../modules/entities/item-types/item-types.sagas';
 import AppUserSagas from '../../modules/entities/app-user/app-user.sagas';
 import FlightSagas from '../../modules/entities/flight/flight.sagas';
+import NotificatonSagas from '../../modules/entities/notification/notification.sagas';
 import CargoRequestStatusSagas from '../../modules/entities/cargo-request-status/cargo-request-status.sagas';
 import CargoRequestSagas from '../../modules/entities/cargo-request/cargo-request.sagas';
 import CargoRequestDetailsSagas from '../../modules/entities/cargo-request-details/cargo-request-details.sagas';
@@ -97,6 +99,9 @@ export default function* root() {
     takeLatest(AppUserTypes.APP_USER_UPDATE_REQUEST, AppUserSagas.updateAppUser, api),
     takeLatest(AppUserTypes.APP_USER_DELETE_REQUEST, AppUserSagas.deleteAppUser, api),
 
+     takeLatest(NotificationTypes.NOTIFICATION_ALL_REQUEST, NotificatonSagas.getAllNotifications, api),
+ 
+    
     takeLatest(FlightTypes.FLIGHT_REQUEST, FlightSagas.getFlight, api),
     takeLatest(FlightTypes.FLIGHT_ALL_REQUEST, FlightSagas.getAllFlights, api),
     takeLatest(FlightTypes.FLIGHT_UPDATE_REQUEST, FlightSagas.updateFlight, api),

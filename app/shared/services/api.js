@@ -103,6 +103,10 @@ const create = (baseURL = AppConfig.apiUrl) => {
   const updateFlight = (flight) => api.put(`api/flights/${flight.id}`, flight);
   const deleteFlight = (flightId) => api.delete('api/flights/' + flightId);
 
+  const getAllNotifications = (options) => api.get('api/notification', options);
+
+
+
   const getCargoRequestStatus = (cargoRequestStatusId) => api.get('api/cargo-request-statuses/' + cargoRequestStatusId);
   const getAllCargoRequestStatuses = (options) => api.get('api/cargo-request-statuses', options);
   const createCargoRequestStatus = (cargoRequestStatus) => api.post('api/cargo-request-statuses', cargoRequestStatus);
@@ -237,6 +241,8 @@ const create = (baseURL = AppConfig.apiUrl) => {
     getAccount,
     updateAccount,
     changePassword,
+
+    getAllNotifications,
   };
 };
 

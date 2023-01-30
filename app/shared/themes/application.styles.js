@@ -194,10 +194,10 @@ const ApplicationStyles = {
       marginTop: 22,
     },
     modalView: {
-      margin: 20,
+      margin: 5,
       backgroundColor: 'white',
       borderRadius: 20,
-      padding: 35,
+      padding: 5,
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: {

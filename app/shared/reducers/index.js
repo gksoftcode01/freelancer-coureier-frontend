@@ -16,6 +16,7 @@ export const reducers = combineReducers({
   itemTypes: require('../../modules/entities/item-types/item-types.reducer').reducer,
   appUsers: require('../../modules/entities/app-user/app-user.reducer').reducer,
   flights: require('../../modules/entities/flight/flight.reducer').reducer,
+  notifications: require('../../modules/entities/notification/notification.reducer').reducer,
   cargoRequestStatuses: require('../../modules/entities/cargo-request-status/cargo-request-status.reducer').reducer,
   cargoRequests: require('../../modules/entities/cargo-request/cargo-request.reducer').reducer,
   cargoRequestDetails: require('../../modules/entities/cargo-request-details/cargo-request-details.reducer').reducer,
