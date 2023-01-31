@@ -350,8 +350,8 @@ const formValueToEntity = (value) => {
     entity.createDate=cargoRequest.createDate ?? null;
     entity.agreedPrice= cargoRequest.agreedPrice ?? null;
   }
-  entity.createBy = cargoRequest?.createBy?account.id:null;
-  entity.status = cargoRequest?.status?cargoRequest.status:1;
+  entity.createBy = {id : cargoRequest?.createBy?account.id:null};
+  entity.status = {id :cargoRequest?.status?cargoRequest.status:1};
 entity.imageUrl = value.imageUrl??null;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
   entity.toCountry = value.toCountry ? { id: value.toCountry } : null;

@@ -23,6 +23,8 @@ import { ModalScreen } from './modal-screen';
  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
  import AppUserDetailScreen from '../modules/entities/app-user/app-user-detail-screen'
  import colors from '../shared/themes/colors';
+//  import PhoneNumber from '../modules/login/PhoneNumber';
+//  import Otp from '../modules/login/Otp';
 
 export const homeScreens = [
     {
@@ -36,6 +38,7 @@ export const homeScreens = [
       component: LoginScreen,
       auth: false,
     },
+    
     {
       name: 'AppUserDetail',
       route: 'AppUserDetail',
@@ -52,6 +55,19 @@ export const homeScreens = [
       component: SettingsScreen,
       auth: true,
     },
+    // {
+    //   name: 'PhoneNumber',
+    //   route: 'PhoneNumber',
+    //   component: PhoneNumber,
+    //   auth: false,
+    // },
+    // {
+    //   name: 'Otp',
+    //   route: 'Otp',
+    //   component: Otp,
+    //   auth: false,
+    // },
+
     {
       name: 'Register',
       route: 'register',

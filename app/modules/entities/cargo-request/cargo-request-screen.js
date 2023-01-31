@@ -104,8 +104,8 @@ function CargoRequestScreen(props) {
                 <UserInfo>
                   <UserImg
                   source={
-                    item.createBy.imageUrl
-                      ? item.createBy.imageUrl
+                    item.createBy?.imageUrl
+                      ? item.createBy?.imageUrl
                       : require('../../../../assets/avatar3.jpg')
                   }
                   />

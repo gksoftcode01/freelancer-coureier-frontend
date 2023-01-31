@@ -30,7 +30,7 @@ import { DrawerButton } from './drawer/drawer-button';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
-import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
+// import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import colors from '../shared/themes/colors'
 import NotificationScreen from '../modules/entities/notification/notifications-screen';
 import WebsocketService from '../shared/websockets/websocket.service';
@@ -131,20 +131,9 @@ function NavContainer(props) {
   useReduxDevToolsExtension(navigationRef);
 
   const dimensions = useWindowDimensions();
-  const scheme = useColorScheme();
+ // const scheme = useColorScheme();
 
-
-  React.useEffect(() => {
-    if (username !== 'anonymoususer') {
-      WebsocketService.subscribeToChat();
-    }
-  }, [username]);
-  React.useEffect(() => {
-    WebsocketService.connect();
-    return function cleanup() {
-      WebsocketService.disconnect();
-    };
-  }, []);
+;
   return !loaded ? (
     
     <View>
@@ -170,6 +159,7 @@ function NavContainer(props) {
       name="Flights"
       component={flightStack}
       options={({route}) => ({
+        auth: true,
         tabBarLabel: 'Available couriers',
         tabBarVisible: getTabBarVisibility(route), 
         headerShown: false,
@@ -197,6 +187,7 @@ function NavContainer(props) {
       name="Cargo"
       component={cargoStack}
       options={{
+        auth: true,
          tabBarLabel: 'Courier requests',
         headerShown: false,
         tabBarIcon: ({color, size}) => (
@@ -207,7 +198,8 @@ function NavContainer(props) {
        <Tab.Screen
       name="Notification"
       component={NotificationScreen}
-      options={{
+       options={{
+        auth: true,
          tabBarLabel: 'Notification',
         headerShown: false,
         tabBarIcon: ({color, size}) => (

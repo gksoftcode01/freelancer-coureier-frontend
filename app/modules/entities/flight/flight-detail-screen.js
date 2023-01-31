@@ -112,7 +112,7 @@ function FlightDetailScreen(props) {
       {account.id == flight.createBy.id ? (
           <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
             <Ionicons name="trash-outline" size={24} color={'red'} onPress={() => setDeleteModalVisible(true)} />
-            {'  '}
+     
             <Ionicons
               name="create-outline"
               size={24}
@@ -133,7 +133,7 @@ function FlightDetailScreen(props) {
           <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
             <TouchableOpacity onPress={() => setAddAskModalVisible(true)}>
               <Text style={styles.blueBtnTxt}>
-                {' '}
+              
                 Send Ask<Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
               </Text>
             </TouchableOpacity>
@@ -200,7 +200,7 @@ function FlightDetailScreen(props) {
           <Text style={styles.backgroundlabel} key={index} >
             {String(entity.name || ' ')}   
           </Text>
-          {' '}
+       
           </>
         ))}    </View> ):null}
         
@@ -247,7 +247,7 @@ function FlightDetailScreen(props) {
                  <Text style={styles.smallBlackLabel}>{`${Number(item.price)} AED`}</Text>
               </PostText>
               <PostText>
-                <Text style={styles.label}> {item.notes||item.notes==''?'Please check my request':item.notes}</Text>{' '}
+                <Text style={styles.label}> {item.notes||item.notes==''?'Please check my request':item.notes}</Text> 
               </PostText>
               <View>
               <TouchableOpacity onPress={() => 
@@ -259,7 +259,7 @@ function FlightDetailScreen(props) {
                                      )}>
 
                   <PostText>
-                       <Text style={styles.purpleLabel}> {'>>Click here to view the courier request<<'} </Text>{' '}
+                       <Text style={styles.purpleLabel}> {'>>Click here to view the courier request<<'} </Text> 
                       </PostText>
                   </TouchableOpacity>
               </View>

@@ -4,11 +4,16 @@ import Immutable from 'seamless-immutable';
 
 const { Types, Creators } = createActions({
   loginRequest: ['username', 'password'],
+ // generateOtp : ['options'],
+ //  loginOtp : ['options'],
   loginSuccess: ['authToken', 'idToken'],
+ // loginOtpSuccess: ['authToken', 'idToken'],
+  //generateOtpSuccess :null,
+ // generateOtpFailure :null,
   loginFailure: ['error'],
   logoutRequest: null,
   logoutSuccess: null,
-  loginLoad: [],
+   loginLoad: [],
   loginLoadSuccess: [],
 });
 
@@ -23,9 +28,18 @@ export const INITIAL_STATE = Immutable({
   error: null,
   fetching: false,
   loading: false,
+  //generateOtpSuccess: false
 });
 
 /* ------------- Reducers ------------- */
+// we're attempting to login
+// export const requestOtp = (state) => state.merge({ fetching: true, error: null });
+
+// export const requestOtpSuccess = (state) => {
+//   return state.merge({ fetching: false, error: null, generateOtpSuccess:true   });
+// };
+ 
+// export const requestOtpFailure = (state, { error }) => state.merge({ fetching: false, error, authToken: null, generateOtpSuccess:false });
 
 // we're attempting to login
 export const request = (state) => state.merge({ fetching: true, error: null });
@@ -60,6 +74,12 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_LOAD_SUCCESS]: loadSuccess,
   [Types.LOGOUT_REQUEST]: logoutRequest,
   [Types.LOGOUT_SUCCESS]: logoutSuccess,
-});
+ // [Types.GENERATE_OTP]: requestOtp,
+  // [Types.LOGIN_OTP]: request,
+  // [Types.LOGIN_OTP_SUCCESS]: success,
+  // [Types.GENERATE_OTP_SUCCESS]: requestOtpSuccess,
+  // [Types.GENERATE_OTP_FAILURE]: requestOtpFailure,
+ 
+ });
 
 /* ------------- Selectors ------------- */

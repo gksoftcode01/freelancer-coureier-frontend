@@ -30,7 +30,7 @@ import { AskTypes } from '../../modules/entities/ask/ask.reducer';
 /* ------------- Sagas ------------- */
 
 import { startup } from './startup.saga';
-import { login, logout, loginLoad } from '../../modules/login/login.sagas';
+import { login, logout, loginLoad} from '../../modules/login/login.sagas';
 import { register } from '../../modules/account/register/register.sagas';
 import { forgotPassword } from '../../modules/account/password-reset/forgot-password.sagas';
 import { changePassword } from '../../modules/account/password/change-password.sagas';
@@ -68,6 +68,8 @@ export default function* root() {
     takeLatest(LoginTypes.LOGIN_LOAD, loginLoad, api),
     takeLatest(LoginTypes.LOGIN_REQUEST, login, api),
     takeLatest(LoginTypes.LOGOUT_REQUEST, logout, api),
+    // takeLatest(LoginTypes.LOGIN_REQUEST, generateOTP, api),
+    // takeLatest(LoginTypes.LOGIN_REQUEST, loginOtp, api),
 
     takeLatest(StateProvinceTypes.STATE_PROVINCE_REQUEST, StateProvinceSagas.getStateProvince, api),
     takeLatest(StateProvinceTypes.STATE_PROVINCE_ALL_REQUEST, StateProvinceSagas.getAllStateProvinces, api),

@@ -264,7 +264,27 @@ function FlightEditScreen(props) {
   const fromCityRef = createRef();
   const toCityRef = createRef();
   const availableItemTypesRef = createRef();
- 
+  const formValueToEntity = (value) => {
+    const entity = {
+      id: value.id ?? null,
+      flightDate: value.flightDate ?? null,
+      maxWeight: value.maxWeight ?? null,
+      notes: value.notes ?? null,
+      budget: value.budget ?? null,
+      createDate: value.createDate ?? null,
+      toDoorAvailable: value.toDoorAvailable === null ? false : Boolean(value.toDoorAvailable),
+      status: value.status ?? null,
+    };
+    entity.createBy ={id : account.id};
+    entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
+    entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
+    entity.fromState = value.fromState ? { id: value.fromState } : null;
+    entity.toState = value.toState ? { id: value.toState } : null;
+    entity.fromCity = value.fromCity ? { id: value.fromCity } : null;
+    entity.toCity = value.toCity ? { id: value.toCity } : null;
+    entity.availableItemTypes = value.availableItemTypes.map((id) => ({ id }));
+    return entity;
+  };
   return (
     <View style={styles.container}>
       <KeyboardAwareScrollView
@@ -449,27 +469,7 @@ const entityToFormValue = (value) => {
     availableItemTypes: value.availableItemTypes?.map((i) => i.id),
   };
 };
-const formValueToEntity = (value) => {
-  const entity = {
-    id: value.id ?? null,
-    flightDate: value.flightDate ?? null,
-    maxWeight: value.maxWeight ?? null,
-    notes: value.notes ?? null,
-    budget: value.budget ?? null,
-    createDate: value.createDate ?? null,
-    toDoorAvailable: value.toDoorAvailable === null ? false : Boolean(value.toDoorAvailable),
-    status: value.status ?? null,
-  };
-  entity.createBy = account.id;
-  entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
-  entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
-  entity.fromState = value.fromState ? { id: value.fromState } : null;
-  entity.toState = value.toState ? { id: value.toState } : null;
-  entity.fromCity = value.fromCity ? { id: value.fromCity } : null;
-  entity.toCity = value.toCity ? { id: value.toCity } : null;
-  entity.availableItemTypes = value.availableItemTypes.map((id) => ({ id }));
-  return entity;
-};
+
 
 const mapStateToProps = (state) => {
   return {

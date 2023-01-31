@@ -153,8 +153,7 @@ const ApplicationStyles = {
     smallBlackLabel: {
       color: Colors.black,
       fontSize: 12,
-      fontFamily: 'Lato-Regular',
-      color: '#666',
+       color: '#666',
       
      },
     purpleLabel: {

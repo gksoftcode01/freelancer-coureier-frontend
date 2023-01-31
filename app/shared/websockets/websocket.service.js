@@ -47,6 +47,8 @@ function createConnection() {
 }
 // methods for connecting/disconnecting
 function connect() {
+  if(true)
+    return;
   if (!alreadyConnectedOnce) {
     if (connectedPromise === null) connection = createConnection();
     var url = AppConfig.apiUrl + 'websocket/tracker';
@@ -167,19 +169,19 @@ export default {
 
 // connects to the websocket and sends events
 function initWebsocket() {
-  return eventChannel((emitter) => {
-    em = emitter;
-    // unsubscribe function
-    return () => {
-      console.log('Socket off');
-    };
-  });
+  // return eventChannel((emitter) => {
+  //   em = emitter;
+  //   // unsubscribe function
+  //   return () => {
+  //     console.log('Socket off');
+  //   };
+  // });
 }
 
 function* websocketSagas() {
-  const channel = yield call(initWebsocket);
-  while (true) {
-    const action = yield take(channel);
-    yield call(processWebsocketMessage, action);
-  }
+  // const channel = yield call(initWebsocket);
+  // while (true) {
+  //   const action = yield take(channel);
+  //   yield call(processWebsocketMessage, action);
+  // }
 }

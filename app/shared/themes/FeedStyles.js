@@ -78,8 +78,7 @@ export const UserName = styled.Text`
      color : ${Colors.myPurple}  
     font-size: 14px;
     font-weight: bold;
-    font-family: 'Lato-Regular';
-`;
+ `;
 export const itemType = styled.Text`
      color : ${Colors.black}  
      background-color: ${Colors.myGrey}  
@@ -93,8 +92,7 @@ export const itemType = styled.Text`
 
 export const PostTime = styled.Text`
     font-size: 12px;
-    font-family: 'Lato-Regular';
-    color: #666;
+     color: #666;
     padding-left:15px;
     padding-bottom:5px;
 `;
@@ -136,8 +134,7 @@ export const Interaction = styled.TouchableOpacity`
 
 export const InteractionText = styled.Text`
     font-size: 12px;
-    font-family: 'Lato-Regular';
-    font-weight: bold;
+     font-weight: bold;
     color: ${props => props.active ? '#2e64e5' : '#333'};
     margin-top: 5px;
     margin-left: 5px;

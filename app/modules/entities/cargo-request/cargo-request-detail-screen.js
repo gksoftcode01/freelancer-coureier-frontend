@@ -231,22 +231,21 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="cargoRequestDetailScrollView">
-      <Spinner visible={!entityId || fetching || !correctEntityLoaded || userRateUpdating} textStyle={{ color: '#FFF' }} />
+      <Spinner visible={!entityId || fetching || !correctEntityLoaded } textStyle={{ color: '#FFF' }} />
 
-      {!fetching && (
-        <Card key={cargoRequest.id}>
+      {!fetching &&cargoRequest&& (
+        <Card key={cargoRequest?.id}>
           <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
-           <PackageImg source={cargoRequest.imageUrl ? cargoRequest.imageUrl : require('../../../../assets/package.png')} /> 
+           <PackageImg source={cargoRequest?.imageUrl ? cargoRequest?.imageUrl : require('../../../../assets/package.png')} /> 
     
           </View>
 
      
 
-          {account.id == cargoRequest.createBy.id ? (
+          {account.id == cargoRequest.createBy?.id ? (
             <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
               <Ionicons name="trash-outline" size={24} color={'red'} onPress={() => setDeleteModalVisible(true)} />
-              {'  '}
-              <Ionicons
+               <Ionicons
                 name="create-outline"
                 size={24}
                 color={'blue'}
@@ -267,8 +266,7 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
             <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
               <TouchableOpacity onPress={() => setAddBidModalVisible(true)}>
                 <Text style={styles.blueBtnTxt}>
-                  {' '}
-                  Add bid <Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
+                   Add bid <Ionicons name="add-circle-outline" size={32} color={'blue'} /> 
                 </Text>
               </TouchableOpacity>
             </ControlIcons>
@@ -340,9 +338,9 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
                   <>
                     <Text style={styles.backgroundlabel} key={index}>
                       {String(entity.name || ' ')}
-                    </Text>{' '}
+                    </Text> 
                   </>
-                ))}{' '}
+                ))} 
               </View>
             ) : null}
           </PostText>
@@ -574,8 +572,7 @@ const [imageViewVisible,setIsImageViewVisible]= React.useState(false);
           <View style={styles.modalView}>
             <View style={[styles.flex, styles.flexRow]}>
               <Text style={styles.modalText}>
-                {' '}
-                {bidStatus} {bidToChange?.fromUser?.firstName} bid ?
+                 {bidStatus} {bidToChange?.fromUser?.firstName} bid ?
               </Text>
             </View>
             <View style={[styles.flexRow]}>

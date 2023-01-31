@@ -112,7 +112,7 @@ import FilterModal from '../../../shared/components/filter/filter-model';
         key={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => props.navigation.navigate('FlightDetail', { entityId: item.id })}>
-            <Card  >
+            <Card  key={item.id}>
               <UserInfo>
                 <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'client' })}>
                   <UserImg source={item.createBy.imageUrl ? item.createBy.imageUrl : require('../../../../assets/avatar3.jpg')} />

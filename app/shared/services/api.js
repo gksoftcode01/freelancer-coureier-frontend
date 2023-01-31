@@ -39,6 +39,10 @@ const create = (baseURL = AppConfig.apiUrl) => {
   const setAuthToken = (userAuth) => api.setHeader('Authorization', 'Bearer ' + userAuth);
   const removeAuthToken = () => api.deleteHeader('Authorization');
   const login = (userAuth) => api.post('api/authenticate', userAuth);
+
+  // const generateOTP = (options) => api.post('api/generateOTP', options);
+  // const loginOtp = (options) => api.post('api/verifyOTP', options);
+
   const register = (user) => api.post('api/register', user);
   const forgotPassword = (data) =>
     api.post('api/account/reset-password/init', data, {
@@ -159,7 +163,8 @@ const create = (baseURL = AppConfig.apiUrl) => {
     getAllUsers,
     getUser,
     deleteUser,
-
+    // loginOtp,
+    // generateOTP,
     createStateProvince,
     updateStateProvince,
     getAllStateProvinces,
