@@ -35,13 +35,18 @@ import FilterModal from '../../../shared/components/filter/filter-model';
   
  
   const [filterVisible,setFilterVisible] = React.useState(false); 
-  const { flight, flightList, getAllFlights, fetching ,account ,filterentity,totalItems} = props;
+  const { flight, flightList, getAllFlights, fetching ,account ,filterentity,totalItems , navigation} = props;
  
   useFocusEffect(
     React.useCallback(() => {
-      console.debug('Flight entity changed and the list screen is now in focus, refresh');
-      setPage(0);
-    fetchFlights();
+      if ( account && account.login) {
+        console.debug('Flight entity changed and the list screen is now in focus, refresh');
+        setPage(0);
+      fetchFlights();
+      }else { 
+        navigation.navigate('Home');
+
+      }
       /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [flight,filterentity]),
   );
@@ -77,7 +82,7 @@ import FilterModal from '../../../shared/components/filter/filter-model';
       //  let filterentity2 = Object.assign({}, filterentity);
       //  filterentity2.isChanged = false;
       //  flightFilter(filterentity2);
-   }, [getAllFlights, page, sort, size,flightList,filterentity]);
+   }, [getAllFlights, page, sort, size,flightList,filterentity,account]);
 
   // React.useEffect(() => {
   //   setPage(0);

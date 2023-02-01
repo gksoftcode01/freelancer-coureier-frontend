@@ -34,13 +34,18 @@ function CargoRequestScreen(props) {
   const [sort /*, setSort*/] = React.useState('id,desc');
   const [size /*, setSize*/] = React.useState(20);
 
-  const { cargoRequest, cargoRequestList, getAllCargoRequests, fetching , filterentity, totalItems,account  } = props;
-
+  const { cargoRequest, cargoRequestList, getAllCargoRequests, fetching , filterentity, totalItems,account  ,navigation} = props;
+ 
   useFocusEffect(
     React.useCallback(() => {
-      console.debug('CargoRequest entity changed and the list screen is now in focus, refresh');
+      if ( account && account.login) {
+                console.debug('CargoRequest entity changed and the list screen is now in focus, refresh');
       setPage(0);
       fetchCargoRequests();
+      }else{
+        navigation.navigate('Home');
+
+      }
       /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [cargoRequest, fetchCargoRequests ,filterentity]),
   );
@@ -71,7 +76,7 @@ function CargoRequestScreen(props) {
     getAllCargoRequests({ page: page - 1, sort, size  ,fromCountry :filterentity?.fromCountry?.id ,
       createBy :  account.id, 
       toCountry : filterentity?.toCountry?.id , isMine : filterentity?.isMine ,isBidSent : filterentity?.isBidSent });
-  }, [getAllCargoRequests, page, sort, size,filterentity]);
+  }, [getAllCargoRequests, page, sort, size,filterentity,account]);
 
   const handleLoadMore = () => {
     if (page < props.links.next || props.links.next === undefined || fetching) {

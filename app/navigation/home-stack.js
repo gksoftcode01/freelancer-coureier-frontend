@@ -33,7 +33,7 @@ export const homeScreens = [
       auth: null,
     },
     {
-      name: 'Login',
+      name: 'LoginScreen',
       route: 'login',
       component: LoginScreen,
       auth: false,

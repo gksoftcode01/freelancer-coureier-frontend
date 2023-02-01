@@ -61,8 +61,9 @@ export const cargoScreens = [
     name: 'CargoRequest',
     route: 'cargo-request',
     component: CargoRequestScreen,
-    auth: true,
+
     options: {   
+      auth: true,
       title: 'Courier requests',
 
       labelStyle : {color : colors.myPurple},
@@ -199,8 +200,9 @@ export const flightScreens = [
     name: 'Flight',
     route: 'flight',
     component: FlightScreen,
-    auth: true,
+  
     options: {   
+      auth: true,
       title: 'Flights', 
       labelStyle : {color : colors.myPurple},
       //headerLeft: () => <HeaderBackButton onPress={() => navigate('Entities')} />,

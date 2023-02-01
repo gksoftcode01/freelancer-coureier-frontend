@@ -350,8 +350,7 @@ const formValueToEntity = (value) => {
     entity.createDate=cargoRequest.createDate ?? null;
     entity.agreedPrice= cargoRequest.agreedPrice ?? null;
   }
-  entity.createBy = {id : cargoRequest?.createBy?account.id:null};
-  entity.status = {id :cargoRequest?.status?cargoRequest.status:1};
+   entity.status = {id :cargoRequest?.status?cargoRequest.status:1};
 entity.imageUrl = value.imageUrl??null;
   entity.fromCountry = value.fromCountry ? { id: value.fromCountry } : null;
   entity.toCountry = value.toCountry ? { id: value.toCountry } : null;
@@ -524,7 +523,7 @@ async function uploadImageAsync(uri) {
               label="From Country"
               placeholder="Select From Country"
               testID="countrySelectInput"
- 
+              required="true"
             />
             <FormField
               name="toCountry"
@@ -535,6 +534,7 @@ async function uploadImageAsync(uri) {
               label="To Country"
               placeholder="Select To Country"
               testID="countrySelectInput"
+              required="true"
              />
             <FormField
               name="fromState"
