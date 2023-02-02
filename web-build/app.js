@@ -4,7 +4,7 @@ const port = 80;                  //Save the port number where your server will 
 
 //Idiomatic expression in express to route and respond to a client request
 app.get('/', (req, res) => {        //get requests to the root ("/") will route here
-    res.redirect('https://app.example.io');
+    res.redirect('https://master--vermillion-treacle-2e22a5.netlify.app/');
     //the .sendFile method needs the absolute path to the file, see: https://expressjs.com/en/4x/api.html#res.sendFile 
 });
 
