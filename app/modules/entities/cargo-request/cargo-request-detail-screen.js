@@ -345,7 +345,7 @@ function CargoRequestDetailScreen(props) {
           ) : null}
         </PostText>
         {cargoRequest.status.id == 2 ? (
-          <>
+          <View>
             <View style={{ textAlign: 'center' }}>
               <Text style={styles.label} color={'red'}>
                 This cargo request has been closed
@@ -361,11 +361,11 @@ function CargoRequestDetailScreen(props) {
             </PostText>
        
             {cargoRequest.createBy.id == account.id ? (
-              <>
+              <View>
                 <PostText>
                   <Text style={styles.label}> Please rate the freelance courier: </Text>
                 </PostText>
-                <View style={{ padding: '10' }}>
+                <View style={{ padding:  10  }}>
                   <StarRating rating={ratingCourier} onChange={setRatingCourier} starSize={24} />
                 </View>
                 <PostText>
@@ -379,7 +379,7 @@ function CargoRequestDetailScreen(props) {
                     maxLength={400}
                     onChangeText={(text) => onChangeTextCourier(text)}
                     value={userNotesCourier}
-                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                    style={{ padding:  10, width: '100%', border: '1px solid black' }}
                   />
                 </View>
 
@@ -389,13 +389,13 @@ function CargoRequestDetailScreen(props) {
                   </TouchableOpacity>
                 </View>
                  
-              </>
+              </View>
             ) :cargoRequest.takenBy.id == account.id ? (
-              <>
+              <View>
                 <PostText>
                   <Text style={styles.label}> Please rate the client: </Text>
                 </PostText>
-                <View style={{ padding: '10' }}>
+                <View style={{ padding: 10 }}>
                   <StarRating rating={ratingRequester} onChange={setRatingRequester} starSize={24} />
                 </View>
                 <PostText>
@@ -409,7 +409,7 @@ function CargoRequestDetailScreen(props) {
                     maxLength={400}
                     onChangeText={(text) => onChangeTextRequester(text)}
                     value={userNotesRequester}
-                    style={{ padding: '10', width: '100%', border: '1px solid black' }}
+                    style={{ padding: 10, width: '100%', border: '1px solid black' }}
                   />
                 </View>
 
@@ -419,9 +419,11 @@ function CargoRequestDetailScreen(props) {
                   </TouchableOpacity>
                  </View>
              
-              </>
+              </View>
             ) : null}
-          </>
+         
+         
+          </View>
         ) : null}
       </Card>
 
