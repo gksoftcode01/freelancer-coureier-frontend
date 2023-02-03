@@ -30,7 +30,6 @@ import { DrawerButton } from './drawer/drawer-button';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { homeStack} from './home-stack';
-// import { AppearanceProvider, useColorScheme } from 'react-native-appearance';
 import colors from '../shared/themes/colors'
 import NotificationScreen from '../modules/entities/notification/notifications-screen';
 import WebsocketService from '../shared/websockets/websocket.service';

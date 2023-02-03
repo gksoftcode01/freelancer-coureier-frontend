@@ -40,8 +40,7 @@ import AskActions from '../ask/ask.reducer';
 function FlightDetailScreen(props) {
   const { route, getFlight, navigation, flight, fetching, error,account,cargoRequestList, getAllCargoRequests,deleteAsk ,updateAsk} = props;
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
-  // prevents display of stale reducer data
-  const entityId = flight?.id ?? null;
+   const entityId = flight?.id ?? null;
   const routeEntityId = route.params?.entityId ?? null;
   const correctEntityLoaded = routeEntityId && entityId && routeEntityId.toString() === entityId.toString();
   const [deleteAskModalVisible, setdeleteAskModalVisible] = React.useState(false);
@@ -71,7 +70,7 @@ function FlightDetailScreen(props) {
       </View>
     );
   }
-  if (!entityId || fetching || !correctEntityLoaded) {
+  if (!entityId || fetching ) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" />
@@ -107,15 +106,18 @@ function FlightDetailScreen(props) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="flightDetailScrollView" key={flight.id}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.paddedScrollView} testID="flightDetailScrollView" 
+    key={flight.id}>
       <Card key={flight.id}>
       {account.id == flight.createBy.id ? (
           <ControlIcons style={{ width: '100%', textAlign: 'right', padding: 0 }}>
-            <Ionicons name="trash-outline" size={24} color={'red'} onPress={() => setDeleteModalVisible(true)} />
+            <Ionicons name="trash-outline"      size={30}
+              style={{padding:5}} color={'red'} onPress={() => setDeleteModalVisible(true)} />
      
             <Ionicons
               name="create-outline"
-              size={24}
+              size={30}
+              style={{padding:5}}
               color={'blue'}
               onPress={() => navigation.navigate('FlightEdit', { entityId })}
             />
@@ -134,84 +136,78 @@ function FlightDetailScreen(props) {
             <TouchableOpacity onPress={() => setAddAskModalVisible(true)}>
               <Text style={styles.blueBtnTxt}>
               
-                Send Ask<Ionicons name="add-circle-outline" size={32} color={'blue'} />{' '}
+                Send Ask<Ionicons name="add-circle-outline" size={32} color={'blue'} /> 
               </Text>
             </TouchableOpacity>
           </ControlIcons>
         ) : null}
 
-       <PostText>
+       <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Flight Date: </Text>
        <Text  >  { moment(new Date(flight.flightDate)).format('MMMM Do YYYY, h:mm a') } </Text>  
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Max Weight: </Text>
       <Text testID="maxWeight">{flight.maxWeight}</Text>
-      </PostText> 
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Budget: </Text>
       <Text testID="budget">{flight.budget}</Text>
-      </PostText> 
-   
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Create Date: </Text>
        <Text  >  { moment(new Date(flight.createDate)).format('MMMM Do YYYY, h:mm a') } </Text>  
-      </PostText>
-
-        <PostText>
+       </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>ToDoorAvailable: </Text>
       <Text testID="toDoorAvailable">{String(flight.toDoorAvailable)}</Text>
-      </PostText>
-
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Status: </Text>
       <Text testID="status">{flight.status}</Text>
-      </PostText>
-
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>From Country: </Text>
       <Text testID="fromCountry">{String(flight.fromCountry ? flight.fromCountry.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>To Country: </Text>
       <Text testID="toCountry">{String(flight.toCountry ? flight.toCountry.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>From State: </Text>
       <Text testID="fromState">{String(flight.fromState ? flight.fromState.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>To State: </Text>
       <Text testID="toState">{String(flight.toState ? flight.toState.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>From City: </Text>
       <Text testID="fromCity">{String(flight.fromCity ? flight.fromCity.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>To City: </Text>
       <Text testID="toCity">{String(flight.toCity ? flight.toCity.name : '')}</Text>
-      </PostText>
-      <PostText>
+      </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
       <Text style={styles.label}>Available Item Types: </Text>
-      {flight.availableItemTypes?.length>0?(<View style={styles.flexRow}> 
-                         {flight.availableItemTypes.map((entity, index) => (
-          <>
-          <Text style={styles.backgroundlabel} key={index} >
-            {String(entity.name || ' ')}   
+      <View style={[styles.flexRow, {padding: 5}]}>
+      {flight.availableItemTypes?.length>0?  
+                         flight.availableItemTypes.map((entity, index) => (
+           <Text style={styles.backgroundlabel} key={index} >
+            { entity.name  }   
           </Text>
-       
-          </>
-        ))}    </View> ):null}
         
-     
-</PostText>
-<PostText>
+        ))     :null}
+        
+        </View>
+        </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
 <Text style={styles.label}>Notes: </Text>
       <Text testID="notes">{flight.notes}</Text>
-</PostText>
- 
-      <PostText></PostText>
+      </View>
+       <PostText></PostText>
       </Card>
 
       {  flight.asks?.length > 0
@@ -220,7 +216,7 @@ function FlightDetailScreen(props) {
               <UserInfo>
                 <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id 
                  ,whoView : 'client' })}>
-                  <UserImg source={item.toUserImg ? item.toUserImg : require('../../../../assets/avatar3.jpg')} />
+                  <UserImg source={ {uri :item.fromUser.imageUrl ? item.fromUser.imageUrl : require('../../../../assets/avatar3.jpg')}} />
                 </TouchableOpacity>
                 <UserInfoText>
                   <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.fromUser.id
@@ -242,13 +238,13 @@ function FlightDetailScreen(props) {
                 </UserInfoText>
               </UserInfo>
 
-              <PostText>
+       <View style={[styles.flexRow, {padding: 5}]}>
                 <Text style={styles.label}>Ask amount: </Text>
                  <Text style={styles.smallBlackLabel}>{`${Number(item.price)} AED`}</Text>
-              </PostText>
-              <PostText>
+                 </View>
+      <View style={[styles.flexRow, {padding: 5}]}>
                 <Text style={styles.label}> {item.notes||item.notes==''?'Please check my request':item.notes}</Text> 
-              </PostText>
+              </View>
               <View>
               <TouchableOpacity onPress={() => 
               
@@ -258,9 +254,9 @@ function FlightDetailScreen(props) {
                 }
                                      )}>
 
-                  <PostText>
+       <View style={[styles.flexRow, {padding: 5}]}>
                        <Text style={styles.purpleLabel}> {'>>Click here to view the courier request<<'} </Text> 
-                      </PostText>
+                      </View>
                   </TouchableOpacity>
               </View>
              <PostTime>{moment(new Date(item.createDate)).fromNow()}</PostTime>

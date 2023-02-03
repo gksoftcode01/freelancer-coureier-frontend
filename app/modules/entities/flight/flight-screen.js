@@ -120,7 +120,7 @@ import FilterModal from '../../../shared/components/filter/filter-model';
             <Card  key={item.id}>
               <UserInfo>
                 <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'client' })}>
-                  <UserImg source={item.createBy.imageUrl ? item.createBy.imageUrl : require('../../../../assets/avatar3.jpg')} />
+                  <UserImg source={ {uri :item.createBy.imageUrl ? item.createBy.imageUrl : require('../../../../assets/avatar3.jpg')}} />
                 </TouchableOpacity>
                 <UserInfoText>
                   <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'client' })}>
@@ -152,12 +152,10 @@ import FilterModal from '../../../shared/components/filter/filter-model';
               {item.availableItemTypes?.length > 0 ? (
                 <View style={styles.flexRow}>
                   {item.availableItemTypes.map((entity, index) => (
-                    <>
-                      <Text style={styles.backgroundlabel} key={index}>
+                       <Text style={styles.backgroundlabel} key={index}>
                         {String(entity.name || ' ')}
-                      </Text>{' '}
-                    </>
-                  ))}{' '}
+                      </Text> 
+                   ))} 
                 </View>
               ) : null}
               <PostTime>{moment(new Date(item.createDate)).fromNow()}</PostTime>

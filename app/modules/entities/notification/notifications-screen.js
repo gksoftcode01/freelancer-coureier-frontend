@@ -108,7 +108,7 @@ import StarRating from 'react-native-star-rating-widget';
                                     , params:  { entityId: item.targetId } } )    }>
             <Card  key={item.id} style={{backgroundColor : item.seen?'white':'#4a6ee02b'}} >
               <UserInfo>
-                   <UserImg source={item.fromUser.imageUrl ? item.fromUser.imageUrl : require('../../../../assets/avatar3.jpg')} />
+                   <UserImg source={ {uri :item.fromUser.imageUrl ? item.fromUser.imageUrl : require('../../../../assets/avatar3.jpg')}} />
               
                 <UserInfoText>
                      <UserName>

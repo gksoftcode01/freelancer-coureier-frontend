@@ -343,7 +343,7 @@ function FlightEditScreen(props) {
               testID="createDateInput"
               inputType="datetime"
               onSubmitEditing={() => toDoorAvailableRef.current?.focus()}
-              hidden="true"
+              hidden={true}
             />
             <FormField
               name="toDoorAvailable"

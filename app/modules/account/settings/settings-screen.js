@@ -42,14 +42,13 @@ import {
   ControlIcons,
 } from '../../../shared/themes/FeedStyles';
 import { Constants } from 'expo';
+import * as Permissions from 'expo-permissions'
 
 import { Platform } from 'react-native';
- 
+
 function SettingsScreen(props) {
-
   const { getAllCountries, countryList, getAllStateProvinces, stateProvinceList, getAllCities, cityList, account, getAccount, navigation } =
-  props;
-
+    props;
 
   // Editing this file with fast refresh will reinitialize the app on every refresh, let's not do that
   if (!getApps().length) {
@@ -61,19 +60,19 @@ function SettingsScreen(props) {
 
   const [image, setimage] = useState(account?.imageUrl);
   const [uploading, setuploading] = useState(false);
-  React.useEffect(() => {
-    async function checkPermission() {
-      // You can await here
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
-      }
-      // ...
-    }
-    checkPermission();
-  }, []); // Or [] if effect doesn't need props or state
+  // React.useEffect(() => {
+  //   async function checkPermission() {
+  //     // You can await here
+  //     if (Platform.OS !== 'web') {
+  //       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //       if (status !== 'granted') {
+  //         alert('Sorry, we need camera roll permissions to make this work!');
+  //       }
+  //     }
+  //     // ...
+  //   }
+  //   checkPermission();
+  // }, []); // Or [] if effect doesn't need props or state
 
   const GenderType = [
     {
@@ -85,7 +84,6 @@ function SettingsScreen(props) {
       value: 'Femal',
     },
   ];
-
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -109,7 +107,7 @@ function SettingsScreen(props) {
     };
 
     props.updateAccount(newData);
-   };
+  };
   React.useEffect(() => {
     getAllCountries();
   }, [getAllCountries, account]);
@@ -124,7 +122,9 @@ function SettingsScreen(props) {
   useDidUpdateEffect(() => {
     if (props.updating === false) {
       if (props.errorUpdating) {
-        setError(props.errorUpdating && props.errorUpdating.detail ? props.errorUpdating.detail : 'Something went wrong updating the entity');
+        setError(
+          props.errorUpdating && props.errorUpdating.detail ? props.errorUpdating.detail : 'Something went wrong updating the entity',
+        );
       } else if (props.updateSuccess) {
         setError('');
         setSuccess('Settings updated');
@@ -132,8 +132,6 @@ function SettingsScreen(props) {
       }
     }
   }, [props.updateSuccess, props.errorUpdating, navigation]);
-
-   
 
   // create refs for handling onSubmit functionality
   const formRef = createRef();
@@ -197,16 +195,30 @@ function SettingsScreen(props) {
   };
 
   const takePhoto = async () => {
-    let pickerResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
+    Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA)
+      .then((response) => {
+        const { status } = response;
+        if (status === 'granted') {
+          ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+          })
+            .then((response) => {
+              if (!response.cancelled) {
+                handleImagePicked(response);
+              }
+            })
+            .catch((error) => console.log(error));
+        }
+      })
+      .catch((error) => console.log(error));
 
-    handleImagePicked(pickerResult);
+ //   handleImagePicked(pickerResult);
   };
 
   const pickImage = async () => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
     });
@@ -227,9 +239,9 @@ function SettingsScreen(props) {
         //account.imageUrl == uploadUrl;
         const newData = {
           ...account,
-          imageUrl:uploadUrl,
+          imageUrl: uploadUrl,
         };
-       props.updateAccount(newData);
+        props.updateAccount(newData);
       }
     } catch (e) {
       console.log(e);
@@ -240,105 +252,108 @@ function SettingsScreen(props) {
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.container}
-      testID="settingsScreen"
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag">
-      {!!error && <Text style={styles.errorText}>{error}</Text>}
-      {!!success && <Text style={styles.successText}>{success}</Text>}
-      <Spinner visible={uploading || props.updating}  textStyle={{ color: '#FFF' }} />
-      <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
-        <UserImgDetail source={image?image: require('../../../../assets/avatar3.jpg')} />
-      </View>
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
+         enableResetScrollToCoords={false}
+        contentContainerStyle={{flexGrow: 1 }}
+        testID="settingsScreen"
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag">
+        {!!error && <Text style={styles.errorText}>{error}</Text>}
+        {!!success && <Text style={styles.successText}>{success}</Text>}
+        <Spinner visible={uploading || props.updating} textStyle={{ color: '#FFF' }} />
+        <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
+          <UserImgDetail source={{ uri: image ? image : require('../../../../assets/avatar3.jpg') }} />
+        </View>
 
-      <View style={styles.userBtnWrapper}>
-        <TouchableOpacity style={styles.blueBtn} onPress={pickImage}>
-          <Text style={styles.blueBtnTxt}> Choose image </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.blueBtn} onPress={() => takePhoto}>
-          <Text style={styles.blueBtnTxt}> Take a photo </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.userBtnWrapper}>
+          <TouchableOpacity style={styles.blueBtn} onPress={pickImage}>
+            <Text style={styles.blueBtnTxt}> Choose image </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.blueBtn} onPress={takePhoto}>
+            <Text style={styles.blueBtnTxt}> Take a photo </Text>
+          </TouchableOpacity>
+        </View>
 
-      <StatusBar barStyle="default" />
+        <StatusBar barStyle="default" />
 
-      <View>
-        {formValue && (
-          <Form initialValues={formValue} validationSchema={validationSchema} onSubmit={onSubmit} ref={formRef}>
-            <FormField
-              name="firstName"
-              ref={firstNameRef}
-              testID="firstNameInput"
-              label="First Name"
-              placeholder="Enter first name"
-              onSubmitEditing={() => lastNameRef?.current?.focus()}
-              autoCapitalize="none"
-            />
-            <FormField
-              name="lastName"
-              ref={lastNameRef}
-              testID="lastNameInput"
-              label="Last Name"
-              placeholder="Enter last name"
-              onSubmitEditing={() => emailRef?.current?.focus()}
-              autoCapitalize="none"
-            />
-            <FormField
-              name="email"
-              ref={emailRef}
-              testID="emailInput"
-              label="Email"
-              placeholder="Enter email"
-              onSubmitEditing={() => formRef?.current?.submitForm()}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="username"
-            />
-            <FormField
-              name="birthDate"
-              ref={birthDateRef}
-              label="Birth Date"
-              placeholder="Enter Birth Date"
-              testID="birthDateInput"
-              inputType="date"
-            />
-            <FormField
-              name="gender"
-              ref={genderRef}
-              label="Gender"
-              placeholder="Enter Gender"
-              testID="genderInput"
-              inputType="select-one"
-              listItems={GenderType}
-              onSubmitEditing={() => mobileNumberRef.current?.focus()}
-            />
+     
+          {formValue && (
+            <Form initialValues={formValue} validationSchema={validationSchema} onSubmit={onSubmit} ref={formRef}>
+              <FormField
+                name="firstName"
+                ref={firstNameRef}
+                testID="firstNameInput"
+                label="First Name"
+                placeholder="Enter first name"
+                onSubmitEditing={() => lastNameRef?.current?.focus()}
+                autoCapitalize="none"
+              />
+              <FormField
+                name="lastName"
+                ref={lastNameRef}
+                testID="lastNameInput"
+                label="Last Name"
+                placeholder="Enter last name"
+                onSubmitEditing={() => emailRef?.current?.focus()}
+                autoCapitalize="none"
+              />
+              <FormField
+                name="email"
+                ref={emailRef}
+                testID="emailInput"
+                label="Email"
+                placeholder="Enter email"
+                onSubmitEditing={() => formRef?.current?.submitForm()}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                textContentType="username"
+              />
+              <FormField
+                name="birthDate"
+                ref={birthDateRef}
+                label="Birth Date"
+                placeholder="Enter Birth Date"
+                testID="birthDateInput"
+                inputType="date"
+              />
+              <FormField
+                name="gender"
+                ref={genderRef}
+                label="Gender"
+                placeholder="Enter Gender"
+                testID="genderInput"
+                inputType="select-one"
+                listItems={GenderType}
+                onSubmitEditing={() => mobileNumberRef.current?.focus()}
+              />
 
-            <FormField
-              name="mobileNumber"
-              ref={mobileNumberRef}
-              label="Mobile Number"
-              placeholder="+971xxxxxxxxx"
-              testID="mobileNumberInput"
-              inputType="text"
-              autoCapitalize="none"
-            />
-            <FormField
-              name="country"
-              inputType="select-one"
-              ref={countryRef}
-              listItems={countryList}
-              listItemLabelField="name"
-              label="Nationality"
-              placeholder="Select Country"
-              testID="countrySelectInput"
-            />
+              <FormField
+                name="mobileNumber"
+                ref={mobileNumberRef}
+                label="Mobile Number"
+                placeholder="+971xxxxxxxxx"
+                testID="mobileNumberInput"
+                inputType="text"
+                autoCapitalize="none"
+              />
+              <FormField
+                name="country"
+                inputType="select-one"
+                ref={countryRef}
+                listItems={countryList}
+                listItemLabelField="name"
+                label="Nationality"
+                placeholder="Select Country"
+                testID="countrySelectInput"
+              />
 
-            <FormButton testID="settingsSubmitButton" title={'Save'} />
-          </Form>
-        )}
-      </View>
-    </KeyboardAwareScrollView>
+              <FormButton testID="settingsSubmitButton" title={'Save'} />
+            </Form>
+          )}
+        
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 const mapStateToProps = (state) => {
@@ -349,7 +364,6 @@ const mapStateToProps = (state) => {
     updateSuccess: state.account.updateSuccess,
     countryList: state.countries.countryList ?? [],
     errorUpdating: state.account.errorUpdating,
-
   };
 };
 

@@ -68,7 +68,7 @@ function HomeScreen(props) {
             <Text style={styles.footer}>Engine: Hermes</Text>
           </View>
         )}
-        <View style={styles.body}>
+        {/* <View style={styles.body}>
           {Platform.OS !== 'android' ? null : (
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Running on Android</Text>
@@ -80,7 +80,7 @@ function HomeScreen(props) {
           )}
         
       
-        </View>
+        </View> */}
         </Card>
       </ScrollView>
     </View>

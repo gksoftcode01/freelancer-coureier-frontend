@@ -106,7 +106,7 @@ function CargoRequestEditScreen(props) {
   const isNewEntity = !(route.params && route.params.entityId);
 
   React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     if (!isNewEntity) {
          getCargoRequest(route.params.entityId);
      } else {
@@ -115,7 +115,7 @@ function CargoRequestEditScreen(props) {
   }, [isNewEntity, getCargoRequest, route, reset]);
 
   React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     if (isNewEntity) {
       setFormValue(entityToFormValue({}));
     } else if (!fetching) {
@@ -137,7 +137,7 @@ function CargoRequestEditScreen(props) {
 
   // fetch related entities
   React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     getAllCargoRequestStatuses();
 //    if(countryList.length == 0)
           getAllCountries();
@@ -198,7 +198,7 @@ const [isFrom, setisFrom] = React.useState(-1);
    
 
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(isFrom==1){
        setStateListFrom(stateProvinceList);
        setisFrom(-1);
@@ -209,9 +209,9 @@ React.useEffect(() => {
 }
 }, [stateProvinceList]);
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(fromCountry>0){
-  console.log("from country", fromCountry ); 
+  //console.log("from country", fromCountry ); 
   getAllStateProvinces({countryId : fromCountry});
   setisFrom(1);
   }
@@ -219,9 +219,9 @@ React.useEffect(() => {
   fromCountry
 ]);
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(toCountry>0){
-  console.log("to country", toCountry ); 
+  //console.log("to country", toCountry ); 
   getAllStateProvinces({countryId : toCountry});
   setisFrom(0);
   }
@@ -231,7 +231,7 @@ React.useEffect(() => {
 
 
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(isFrom==1){
        setCityListFrom(cityList);
        setisFrom(-1);
@@ -243,9 +243,9 @@ React.useEffect(() => {
 }, [cityList]);
 
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(fromState>0){
-  console.log("from state", fromState ); 
+  //console.log("from state", fromState ); 
   getAllCities({stateId : fromState});
   setisFrom(1);
   }
@@ -253,9 +253,9 @@ React.useEffect(() => {
   fromState
 ]);
 React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   if(toState>0){
-  console.log("to state", toState ); 
+  //console.log("to state", toState ); 
   getAllCities({stateId : toState});
   setisFrom(0);
   }
@@ -268,7 +268,7 @@ const Logger = () => {
   const formik = useFormikContext();
 
   React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     const tmp =formik.values.fromCountry||0 ;
     if(tmp!==fromCountry)
       setfromCountry(tmp);
@@ -277,7 +277,7 @@ const Logger = () => {
    ]);
 
    React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     const tmp =formik.values.toCountry||0 ;
     if(tmp!==toCountry)
     setToCountry(tmp);
@@ -286,7 +286,7 @@ const Logger = () => {
  ]);
 
  React.useEffect(() => {
-  console.log("here");
+  //console.log("here");
   const tmp =formik.values.fromState||0 ;
   if(tmp!==fromState)
       setFromState(tmp);
@@ -295,7 +295,7 @@ const Logger = () => {
    ]);
 
    React.useEffect(() => {
-    console.log("here");
+    //console.log("here");
     const tmp =formik.values.toState||0 ;
     if(tmp!==toState)
     setToState(tmp);
@@ -377,7 +377,7 @@ const pickImage = async () => {
     aspect: [4, 3],
   });
 
-  console.log({ pickerResult });
+  //console.log({ pickerResult });
 
   handleImagePicked(pickerResult);
 };
@@ -389,7 +389,7 @@ const handleImagePicked = async (pickerResult) => {
     if (!pickerResult.cancelled) {
       const uploadUrl = await uploadImageAsync(pickerResult.uri);
       setimage(uploadUrl);
-      console.log(uploadUrl);
+      //console.log(uploadUrl);
       if (uploadUrl && !isNewEntity) {
         const newData = {
           ...cargoRequest,
@@ -399,7 +399,7 @@ const handleImagePicked = async (pickerResult) => {
       }
     }
   } catch (e) {
-    console.log(e);
+    //console.log(e);
     alert('Upload failed, sorry :(');
   } finally {
     setuploading(false);
@@ -415,7 +415,7 @@ async function uploadImageAsync(uri) {
       resolve(xhr.response);
     };
     xhr.onerror = function (e) {
-      console.log(e);
+      //console.log(e);
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';
@@ -446,15 +446,15 @@ async function uploadImageAsync(uri) {
 
         <Spinner visible={uploading || updating ||fetching}  textStyle={{ color: '#FFF' }} />
         <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
-          
+        {image&&(
         <PackageImg  
-        source={image?image: require('../../../../assets/package.png')} />
-
+        source={ {uri :image?image: require('../../../../assets/package.png')}} />
+        )}
         <View style={styles.userBtnWrapper}>
         <TouchableOpacity style={styles.blueBtn} onPress={pickImage}>
           <Text style={styles.blueBtnTxt}> Choose image </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.blueBtn} onPress={() => takePhoto}>
+        <TouchableOpacity style={styles.blueBtn} onPress={takePhoto}>
           <Text style={styles.blueBtnTxt}> Take a photo </Text>
         </TouchableOpacity>
       </View>

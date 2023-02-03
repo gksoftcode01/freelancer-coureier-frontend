@@ -108,11 +108,11 @@ function CargoRequestScreen(props) {
                 <Card key={item.id} >  
                 <UserInfo>
                   <UserImg
-                  source={
+                  source={ {uri :
                     item.createBy?.imageUrl
                       ? item.createBy?.imageUrl
                       : require('../../../../assets/avatar3.jpg')
-                  }
+                  }}
                   />
                   <UserInfoText>
                     <TouchableOpacity onPress={() => props.navigation.navigate('AppUserDetail', { entityId: item.createBy.id,whoView : 'courier' })} >
@@ -134,31 +134,28 @@ function CargoRequestScreen(props) {
                 </UserInfo>
                 <PostText>
                 <Text style={styles.orangeLabel}> {item.fromCountry?.name}  </Text>
-                {' '}   
-                <Ionicons name="airplane-outline" size={18} color={props.tintColor} />
-                {' '} 
-                <Text style={styles.orangeLabel}>  {item.toCountry?.name}  </Text>
+                 <Ionicons name="airplane-outline" size={18} color={props.tintColor} />
+                 <Text style={styles.orangeLabel}>  {item.toCountry?.name}  </Text>
                        
                  </PostText>
                  <PostText>
                  
                  <Text   style={styles.label}>{Number(item.budget) > 0?` Budget : ${Number(item.budget)} AED` :''}</Text>
-                 {' '}
+             
                  <Text style={styles.pinkLabel}>  {item.isToDoor?'To Door only':'' } </Text>  
 
     </PostText>
-    {item.reqItemTypes?.length > 0 ? (
-                <View style={styles.flexRow}>
-                  {item.reqItemTypes.map((entity, index) => (
-                    <> 
-                      <Text style={styles.backgroundlabel} key={index}>
-                     {String(entity.name || ' ')}
-                      </Text>{' '}
-                    </>
-                  ))}{' '}
-                </View>
-              ) : null}
+    <View style={styles.flexRow}>
 
+    {item.reqItemTypes?.length > 0 ?  
+                   item.reqItemTypes.map((entity, index) => (
+                       <Text style={styles.backgroundlabel} key={index}>
+                     {String(entity.name || ' ')}
+                      </Text>
+                   )  
+              
+              ) : null}
+  </View>
                             <PostTime>{ moment(new Date(item.createDate)).fromNow()}</PostTime>
 
                         </Card>

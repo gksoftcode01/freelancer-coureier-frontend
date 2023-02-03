@@ -68,7 +68,7 @@ function AppUserDetailScreen(props) {
       testID="appUserDetailScrollView">
               <View style={{ textAlign: 'center', alignContent: 'center', alignItems: 'center' }}>
 
-       <UserImgDetail source={user.imageUrl ? user.imageUrl : require('../../../../assets/avatar3.jpg')}  />
+       <UserImgDetail source={ {uri :user.imageUrl ? user.imageUrl : require('../../../../assets/avatar3.jpg')}}  />
        </View>
       <Card key={user.id}>
         <PostText></PostText>

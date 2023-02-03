@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -23,13 +25,25 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+        ,        "android.permission.CAMERA_ROLL"
+        ,   "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.gksoft.freecourier"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "thecourier",
-    "extra": {},
+    "extra": {
+      "eas": {
+        "projectId": "a109dc7c-1678-4f8b-ba93-6f4560c0050b"
+      }
+    },
     "plugins": [
       [
         "expo-image-picker",

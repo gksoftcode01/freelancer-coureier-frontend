@@ -44,7 +44,7 @@ export const INITIAL_STATE = Immutable({
   links: { next: 0 },
   totalItems: 0,
   filterentity : {
-    fromCountry: { id : 231 } ,
+    fromCountry: null,
     toCountry:  null,
     isMine : false,
     isBidSent :false,

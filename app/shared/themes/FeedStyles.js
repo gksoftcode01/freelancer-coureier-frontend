@@ -103,7 +103,12 @@ export const PostText = styled.Text`
     padding-right: 10px;
     margin-bottom: 10px;
 `;
-
+export const PostTextView = styled.View`
+font-size: 14px;
+padding-left: 10px;
+padding-right: 10px;
+margin-bottom: 10px;
+`;
 export const PostImg = styled.Image`
     width: 100%;
     height: 250px;
